@@ -1,0 +1,3 @@
+[submodule "KUBERNETES/programming-scripting"]
+	path = KUBERNETES/programming-scripting
+	url = https://github.com/Mahin556/programming-scripting.git

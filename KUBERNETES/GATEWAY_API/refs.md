@@ -1,8 +1,0 @@
-- [Documentation](https://gateway-api.sigs.k8s.io/)
-- [Gateway API SIGS Guide](https://gateway-api.sigs.k8s.io/guides/#installing-gateway-api)
-- [Gatewayclass](https://gateway-api.sigs.k8s.io/api-types/gatewayclass/)
-- [Gateway](https://gateway-api.sigs.k8s.io/api-types/gateway)
-- [Httproute](https://gateway-api.sigs.k8s.io/api-types/httproute/)
-- [Mkcert](https://github.com/FiloSottile/mkcert)
-- [More Official Guides](https://gateway-api.sigs.k8s.io/guides/)
-- [Infrastructure Labels](https://kubernetes.io/blog/2023/11/28/gateway-api-ga/#gateway-infrastructure-labels)

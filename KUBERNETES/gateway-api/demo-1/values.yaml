@@ -3,10 +3,11 @@ accessLog:
   enabled: true
 ports:
   web: 
-    port: 8000
+    port: 8000 #Configure the port on which Traefik will listen for HTTP traffic
+    exposedPort: 80 #Service port that will be exposed to the outside world for HTTP traffic
   websecure:
-    port: 8443
-    exposedPort: 443
+    port: 8443 #Configure the port on which Traefik will listen for HTTPS traffic
+    exposedPort: 443 #Service port that will be exposed to the outside world for HTTPS traffic
 
 # we enable gateway-api features
 providers:

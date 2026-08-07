@@ -55,7 +55,7 @@ The following will deploy a `deployment`, `service` and require `configMap` and 
 ```shell
 # deploy example apps
 kubectl apply -f KUBERNETES/programming-scripting/python/applications/flask/app-1/deployment.yaml
-kubectl apply -f KUBERNETES/programming-scripting/golang/applications/http-api/root-status-route-apis/deployment.yaml
+kubectl apply -f KUBERNETES/programming-scripting/golang/applications/http-api/root-status-route-apis/deployment-1.yaml
 kubectl apply -f KUBERNETES/gateway-api/demo-1/web-app.yaml
 
 # check example apps
@@ -113,7 +113,6 @@ helm install traefik traefik/traefik \
 As we don't have a LoadBalancer service in `kind`, let's `port-forward` so we can pretend we have one 
 
 ```shell
-
 # check the pods
 kubectl -n traefik get pods 
 
@@ -123,7 +122,10 @@ kubectl -n traefik logs -l app.kubernetes.io/instance=traefik-traefik
 # port forward for access
 kubectl -n traefik port-forward svc/traefik 80
 ```
-
+Instead we can use
+- Cloud based LB
+- Open Source LB
+- MetalLB
 
 ## Install a Gateway Class
 
@@ -136,7 +138,7 @@ Note that we use a Traefik Class in our example. </br>
 `GatewayClass` is a cluster-scoped resource defined by the infrastructure provider. This resource represents a class of Gateways that can be instantiated. </br>
 
 ```shell
-kubectl apply -f kubernetes/gateway-api/traefik/01-gatewayclass.yaml
+kubectl apply -f KUBERNETES/gateway-api/traefik/01-gatewayclass.yaml
 
 # check
 kubectl get gatewayclass
@@ -155,7 +157,7 @@ Note that we use a Traefik Gateway in our example. </br>
 This gateway lives in the same namespace as the routes and applications
 
 ```shell
-kubectl apply -f kubernetes/gateway-api/traefik/02-gateway.yaml
+kubectl apply -f KUBERNETES/gateway-api/traefik/02-gateway.yaml
 ```
 
 ## Traffic Management Features : HTTP Routes
@@ -192,8 +194,20 @@ This will route all traffic that matches the `Host` header with the `hostnames` 
 http://example-app-python.com/ 👉🏽 http://python-svc:5000 </br>
 http://example-app-go.com/ 👉🏽 http://go-svc:5000 </br>
 
+```bash
+# (These are called upstream kubernetes services)
+http://python-svc:5000 
+http://go-svc:5000 
+```
 ```shell
-kubectl apply -f kubernetes/gateway-api/03-httproute-by-hostname.yaml
+kubectl apply -f KUBERNETES/gateway-api/demo-1/03-httproute-by-hostname.yaml
+```
+```shell
+curl -H "Host: example-app-python.com" http://localhost:8000
+curl -H "Host: example-app-python.com" http://localhost:8000/
+curl -H "Host: example-app-go.com" http://localhost:8000/
+curl -H "Host: example-app-go.com" http://localhost:8000/status
+curl -H "Host: example-app-go.com" http://localhost:8000/demo #404 page not found
 ```
 
 ### Route by Path
@@ -210,7 +224,13 @@ http://example-app-go.com/* 👉🏽 http://go-svc:5000/* </br>
 
 
 ```shell
-kubectl apply -f kubernetes/gateway-api/04-httproute-by-path-exact.yaml
+kubectl apply -f KUBERNETES/gateway-api/demo-1/04-httproute-by-path-exact.yaml
+```
+```shell
+curl -H "Host: example-app-python.com" http://localhost:8000
+curl -H "Host: example-app-python.com" http://localhost:8000/
+curl -H "Host: example-app-go.com" http://localhost:8000/
+curl -H "Host: example-app-go.com" http://localhost:8000/status
 ```
 
 ### Route using URL Rewrite
@@ -224,7 +244,14 @@ As well as: </br>
 http://example-app.com/api/go/status 👉🏽 http://go-svc:5000/status </br>
 
 ```shell
-kubectl apply -f kubernetes/gateway-api/05-httproute-by-path-rewrite.yaml
+kubectl apply -f KUBERNETES/gateway-api/demo-1/05-httproute-by-path-rewrite.yaml
+```
+```shell
+curl -H "Host: example-app.com" http://localhost:8000/api/python
+curl -H "Host: example-app.com" http://localhost:8000/api/python/
+curl -H "Host: example-app.com" http://localhost:8000/api/go
+curl -H "Host: example-app.com" http://localhost:8000/api/go/
+curl -H "Host: example-app.com" http://localhost:8000/api/go/status
 ```
 
 ### Request\Response Header Manipulation
@@ -244,8 +271,10 @@ kubectl port-forward svc/web-app 8000:80
 The Header modification:
 
 ```shell
-kubectl apply -f kubernetes/gateway-api/06-httproute-header-modify.yaml
+kubectl apply -f KUBERNETES/gateway-api/demo-1/06-httproute-header-modify.yaml
 ```
+
+![alt text](/KUBERNETES/gateway-api/demo-1/image-1.png)
 
 ### HTTPS and TLS
 
@@ -276,7 +305,7 @@ We need to
 * Then apply the TLS listener in our HTTP Route to enable TLS, using `sectionName`
 
 ```shell
-kubectl apply -f kubernetes/gateway-api/07-httproute-tls.yaml
+kubectl apply -f KUBERNETES/gateway-api/demo-1/07-httproute-tls.yaml
 ```
 
 Let's `port-forward` to 443 since that is where TLS is exposed:

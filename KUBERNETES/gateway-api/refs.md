@@ -7,3 +7,4 @@
 - [More Official Guides](https://gateway-api.sigs.k8s.io/guides/)
 - [Infrastructure Labels](https://kubernetes.io/blog/2023/11/28/gateway-api-ga/#gateway-infrastructure-labels)
 - [Traefik Gateway API HELM Chart](https://github.com/traefik/traefik-helm-chart/tree/master)
+- [Gateway API for Kubernetes](https://www.youtube.com/playlist?list=PLHq1uqvAteVtxMWvN-Cr8r5b9_MotJ7Md)

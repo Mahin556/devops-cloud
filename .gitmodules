@@ -1,3 +1,6 @@
 [submodule "KUBERNETES/programming-scripting"]
 	path = KUBERNETES/programming-scripting
 	url = https://github.com/Mahin556/programming-scripting.git
+[submodule "MONITORING/prometheus/setups/kubernetes/setup-1/k8s-kind-voting-app"]
+	path = MONITORING/prometheus/setups/kubernetes/setup-1/k8s-kind-voting-app
+	url = https://github.com/Mahin556/k8s-kind-voting-app.git

@@ -1,0 +1,15 @@
+# NGINX GATEWAY API DATA PLANE
+nginx:
+  replicas: 2
+  service:
+    type: ClusterIP
+
+# NGINX GATEWAY API CONTROL PLANE
+nginxGateway:
+  gwAPIExperimentalFeatures:
+    enable: true
+  snippetsFilters:
+    enable: true
+  gatewayClassName: nginx-gateway
+  name: nginx-gateway
+  replicas: 2

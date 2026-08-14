@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: production-resource-policy
+  namespace: production
+spec:
+  limits:
+    - type: Container
+      min:
+        cpu: "100m"
+        memory: "128Mi"
+      max:
+        cpu: "4"
+        memory: "4Gi"
+      default:
+        cpu: "1"
+        memory: "1Gi"
+      defaultRequest:
+        cpu: "500m"
+        memory: "512Mi"
+      maxLimitRequestRatio:
+        cpu: "4"       # limit can be max 4 × request
+        memory: "2"    # limit can be max 2 × request
+
+---
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: high-pod-6
+  namespace: quota-lab
+spec:
+  priorityClassName: high-priority
+  containers:
+    - name: nginx
+      image: nginx:latest
+      resources:
+        requests:
+          cpu: "500m"
+          memory: "512Mi"
+        limits:
+          cpu: "2"       # 2 / 0.5 = 4 ✅
+          memory: "1Gi"  # 1024 / 512 = 2 ✅

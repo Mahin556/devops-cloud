@@ -1,0 +1,36 @@
+# Monitoring Quota to Prevent Future Incidents
+# PrometheusRule — alert before you hit quota (not after)
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: quota-alerts
+spec:
+  groups:
+    - name: quota
+      rules:
+        # Alert at 80% memory quota usage
+        - alert: NamespaceQuotaMemoryHigh
+          expr: |
+            kube_resourcequota{resource="limits.memory", type="used"}
+            /
+            kube_resourcequota{resource="limits.memory", type="hard"}
+            > 0.80
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Namespace {{ $labels.namespace }} memory quota > 80%"
+            description: "{{ $value | humanizePercentage }} of memory quota used"
+
+        # Alert at 80% pod count quota
+        - alert: NamespaceQuotaPodCountHigh
+          expr: |
+            kube_resourcequota{resource="pods", type="used"}
+            /
+            kube_resourcequota{resource="pods", type="hard"}
+            > 0.80
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Namespace {{ $labels.namespace }} pod count quota > 80%"

@@ -1,0 +1,18 @@
+# Compute quotas (what original answer covers)
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: compute-quota
+  namespace: production
+spec:
+  hard:
+    # CPU
+    requests.cpu: "4"          # total CPU requests across all pods
+    limits.cpu: "8"            # total CPU limits across all pods
+
+    # Memory
+    requests.memory: 4Gi       # total memory requests
+    limits.memory: 8Gi         # total memory limits
+
+    # Huge pages
+    requests.hugepages-2Mi: 0  # usually 0 to disable huge pages

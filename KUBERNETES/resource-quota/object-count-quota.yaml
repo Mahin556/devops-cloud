@@ -1,0 +1,23 @@
+# Object count quotas (the ones people forget)
+spec:
+  hard:
+    # Pods
+    pods: "20"       # max number of pods in namespace
+    
+    # Services
+    services: "10"
+    services.loadbalancers: "2"
+    services.nodeports: "0"    # can block all NodePort services
+
+    # Storage
+    persistentvolumeclaims: "5"
+    requests.storage: 100Gi    # total storage across all PVCs
+
+    # Config
+    configmaps: "20"
+    secrets: "30"              # hit this more often than you'd think
+
+    # Deployments, Jobs etc
+    count/deployments.apps: "10"
+    count/replicasets.apps: "50"
+    count/jobs.batch: "5"

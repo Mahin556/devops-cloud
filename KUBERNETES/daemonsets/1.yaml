@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: splunk-monitoring-agent
+  namespace: monitoring
+spec:
+  selector:
+    matchLabels:
+      app: logging
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+  minReadySeconds: 10
+  template:
+    metadata:
+      labels:
+        app: logging
+    spec:
+      restartPolicy: Always
+      priorityClassName: high-priority
+      nodeSelector:
+        type: platform-tools
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            preference:
+              matchExpressions:
+              - key: type
+                operator: In
+                values:
+                - platform-tools
+      containers:
+        - name: splunk-monitoring-agent
+          image: splunk:latest
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: splunk-agent-pdb
+  namespace: monitoring
+spec:
+  minAvailable: 80%
+  selector:
+    matchLabels:
+      app: logging

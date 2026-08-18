@@ -1,0 +1,7 @@
+- https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/
+- https://devopscube.com/kubernetes-daemonset/
+- https://spacelift.io/blog/kubernetes-cheat-sheet
+- https://youtu.be/kvITrySpy_k
+- https://spacelift.io/blog/kubernetes-daemonset *
+- [Day 29: MASTER DaemonSet, Job & CronJob in Kubernetes](https://www.youtube.com/watch?v=gKbIkyE0TTI&ab_channel=CloudWithVarJosh)
+- DaemonSet: [https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/](https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/) 

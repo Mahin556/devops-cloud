@@ -1,0 +1,16 @@
+# Job with Backoff Limit
+# Pod get terminated if they take time more then specified in activeDeadlineSeconds
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: retry-job
+spec:
+  activeDeadlineSeconds: 20
+  template:
+    spec:
+      containers:
+      - name: fail
+        image: busybox
+        command: ["sh", "-c", "sleep 60"]   # Always fails
+      restartPolicy: OnFailure

@@ -1,0 +1,17 @@
+# Job with Completions and Parallelism
+# Kubernetes will run 2 Pods at once until 5 total successes are completed.
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: batch-job
+spec:
+  completions: 5       # Run 5 Pods successfully
+  parallelism: 2       # Run 2 Pods at the same time
+  template:
+    spec:
+      containers:
+      - name: worker
+        image: busybox
+        command: ["sh", "-c", "echo Processing task $(date); sleep 5"]
+      restartPolicy: OnFailure

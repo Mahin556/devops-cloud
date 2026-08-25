@@ -1,0 +1,52 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: db-policy
+  namespace: db-ns
+spec:
+  policyTypes:
+    - Ingress
+    - Egress
+  podSelector:
+    matchLabels:
+      app: app1
+      role: db
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: app1-ns
+          podSelector:
+            matchLabels:
+              app: app1
+              role: backend
+      ports:
+        - protocol: TCP
+          port: 3306
+    
+    #To download telnet binary we need to configure this rule
+    #After dowloading binary of all necessory tooles we can remove this rule
+    #or
+    #we can download binary before creating network policy
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+          
+    - to:
+      - ipBlock:
+          cidr: 0.0.0.0/0
+      ports:
+      - protocol: TCP
+        port: 80
+      - protocol: TCP
+        port: 443

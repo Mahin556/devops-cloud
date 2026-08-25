@@ -1,0 +1,85 @@
+# Allow Multiple Paths
+# Allows GET requests to /public and /health
+rules:
+  http:
+    - method: "GET"
+      path: "/public"
+    - method: "GET"
+      path: "/health"
+
+
+# Allow Multiple Methods
+# Allows GET and POST on /public
+rules:
+  http:
+    - method: "GET"
+      path: "/public"
+    - method: "POST"
+      path: "/public"
+
+
+# Allow Multiple Pods
+# Allows traffic from pods with env=prod OR env=staging
+fromEndpoints:
+  - matchLabels:
+      env: prod
+  - matchLabels:
+      env: staging
+
+
+# Allow Entire Namespace
+# Allows all pods from "default" namespace
+fromEndpoints:
+  - matchLabels:
+      io.kubernetes.pod.namespace: default
+
+
+# Allow All HTTP
+# Allows all HTTP methods and paths
+rules:
+  http:
+    - {}
+
+
+# Allow Multiple Ports
+# Allows traffic on ports 80 and 8080
+toPorts:
+  - ports:
+      - port: "80"
+        protocol: TCP
+      - port: "8080"
+        protocol: TCP
+
+
+# Allow All Traffic
+# Allows all ingress traffic to selected pods
+ingress:
+  - {}
+
+
+# ADVANCED EXAMPLE POLICY
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: advanced-policy
+spec:
+  endpointSelector:
+    matchLabels:
+      app: nginx
+
+  ingress:
+  - fromEndpoints:
+    - matchLabels:
+        env: prod
+
+    toPorts:
+    - ports:
+      - port: "80"
+        protocol: TCP
+
+      rules:
+        http:
+        - method: "GET"
+          path: "/public"
+        - method: "POST"
+          path: "/upload"

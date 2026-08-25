@@ -1,0 +1,59 @@
+# In this manifest:
+# Each ingress rule is separate.
+# Traffic is allowed if it matches ANY rule.
+#
+# LOGIC:
+# Allow traffic if:
+#   Source IP is in 172.17.0.0/16 (except 172.17.1.0/24)
+#   OR
+#   Source namespace has label myspace=namespacea
+#   OR
+#   Source pod has label role=frontend
+#
+# So even if only ONE condition matches → traffic allowed
+
+
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: test-network-policy
+  namespace: namespace-b
+
+spec:
+  # Apply policy to pods with this label
+  podSelector:
+    matchLabels:
+      environment: test
+
+  policyTypes:
+  - Ingress
+
+  ingress:
+
+  # RULE 1: Allow IP range
+  - from:
+    - ipBlock:
+        cidr: 172.17.0.0/16
+        except:
+        - 172.17.1.0/24
+
+  # RULE 2: Allow namespace
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          myspace: namespacea
+
+  # RULE 3: Allow frontend pods
+  - from:
+    - podSelector:
+        matchLabels:
+          role: frontend
+
+# RESULT:
+# This is equivalent to:
+# IF
+#   IP match
+# OR namespace match
+# OR pod match
+# THEN allow
+# Very permissive policy.

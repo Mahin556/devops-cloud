@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nginx-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx" 
+spec:
+  ingressClassName: "nginx"
+  rules:
+  - host: <Load_Balancer_Endpoint>
+    http:
+      paths:
+      - path: /public
+        pathType: Prefix
+        backend:
+          service:
+            name: nginx-service
+            port:
+              number: 80

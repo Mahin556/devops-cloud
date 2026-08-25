@@ -1,0 +1,42 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: np-100x
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      level: 100x
+  policyTypes:
+  - Egress
+  egress:
+  # Rule 1: Allow to peer pods in level-1000
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: level-1000
+      podSelector:
+        matchLabels:
+          level: 100x
+  # Rule 2: Allow to peer pods in level-1001
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: level-1001
+      podSelector:
+        matchLabels:
+          level: 100x
+  # Rule 3: Allow to peer pods in level-1002
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: level-1002
+      podSelector:
+        matchLabels:
+          level: 100x
+  # Rule 4: Allow DNS to ANYWHERE (port 53)
+  - ports:
+    - protocol: TCP
+      port: 53
+    - protocol: UDP
+      port: 53

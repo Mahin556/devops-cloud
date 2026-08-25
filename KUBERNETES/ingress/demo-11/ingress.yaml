@@ -1,0 +1,99 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: login-app-ingress
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: login-app.service.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: login-app-service
+            port:
+              number: 80
+      - path: /welcome
+        pathType: Prefix
+        backend:
+          service:
+            name: login-app-service
+            port:
+              number: 80
+      - path: /endpoint
+        pathType: Prefix
+        backend:
+          service:
+            name: login-app-service
+            port:
+              number: 80
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: payment-app-ingress
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: payment-app.service.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: payment-app-service
+            port:
+              number: 80
+      - path: /welcome
+        pathType: Prefix
+        backend:
+          service:
+            name: payment-app-service
+            port:
+              number: 80
+      - path: /endpoint
+        pathType: Prefix
+        backend:
+          service:
+            name: payment-app-service
+            port:
+              number: 80
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: checkout-app-ingress
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: checkout-app.service.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: checkout-app-service
+            port:
+              number: 80
+      - path: /welcome
+        pathType: Prefix
+        backend:
+          service:
+            name: checkout-app-service
+            port:
+              number: 80
+      - path: /endpoint
+        pathType: Prefix
+        backend:
+          service:
+            name: checkout-app-service
+            port:
+              number: 80

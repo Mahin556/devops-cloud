@@ -1,0 +1,12 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: demo
+spec:
+  ingressClassName: nginx
+  # Any request that not match any host or path will be routed to the default backend service. If you want to use a different default backend service, you can change the name and port below.
+  defaultBackend:
+    service:
+      name: default-service-2
+      port:
+        number: 80

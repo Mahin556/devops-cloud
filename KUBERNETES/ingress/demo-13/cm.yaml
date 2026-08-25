@@ -1,0 +1,357 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: login-app-config
+data:
+  nginx.conf: |
+    user  nginx;
+    worker_processes  auto;
+
+    error_log  /var/log/nginx/error.log notice;
+    pid        /var/run/nginx.pid;
+
+    events {
+        worker_connections  1024;
+    }
+
+    http {
+        include       /etc/nginx/mime.types;
+        default_type  application/octet-stream;
+
+        log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                          '$status $body_bytes_sent "$http_referer" '
+                          '"$http_user_agent" "$http_x_forwarded_for"';
+
+        access_log  /var/log/nginx/access.log  main;
+
+        sendfile        on;
+        #tcp_nopush     on;
+
+        keepalive_timeout  65;
+
+        #gzip  on;
+
+        server {
+            listen       80;
+            server_name  localhost;
+
+            location / {
+                root   /usr/share/nginx/html;
+                index  index.html index.htm;
+            }
+
+            location = /welcome {
+                root /usr/share/nginx/html;
+                try_files /welcome/index.html =404;
+            }
+
+            location /welcome/ {
+                root   /usr/share/nginx/html;
+                index  index.html index.htm;
+                try_files $uri $uri/ /welcome/index.html;
+            }
+
+            location = /podinfo {
+                root /usr/share/nginx/html;
+                try_files /podinfo/index.html =404;
+            }
+
+            location /podinfo/ {
+                root   /usr/share/nginx/html;
+                index  index.html index.htm;
+                try_files $uri $uri/ /podinfo/index.html;
+            }
+
+            location /endpoint {
+                return 200 'Endpoint of login-app is working!';
+            }
+
+            error_page   500 502 503 504  /50x.html;
+            location = /50x.html {
+                root   /usr/share/nginx/html;
+            }
+        }
+    }
+
+  index.html: |
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>My Service</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f4f4f4;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                margin: 0;
+            }
+
+            .container {
+                background: white;
+                padding: 30px;
+                border-radius: 10px;
+                text-align: center;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            }
+
+            h1 {
+                color: #326CE5;
+            }
+
+            p {
+                font-size: 18px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Welcome to Login Service</h1>
+            <p><strong>Service:</strong> Login Service</p>
+            <p>This page is being served by NGINX.</p>
+        </div>
+    </body>
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: payment-app-config
+data:
+  nginx.conf: |
+    user  nginx;
+    worker_processes  auto;
+
+    error_log  /var/log/nginx/error.log notice;
+    pid        /var/run/nginx.pid;
+
+    events {
+        worker_connections  1024;
+    }
+
+    http {
+        include       /etc/nginx/mime.types;
+        default_type  application/octet-stream;
+
+        log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                          '$status $body_bytes_sent "$http_referer" '
+                          '"$http_user_agent" "$http_x_forwarded_for"';
+
+        access_log  /var/log/nginx/access.log  main;
+
+        sendfile        on;
+        #tcp_nopush     on;
+
+        keepalive_timeout  65;
+
+        #gzip  on;
+
+        server {
+            listen       80;
+            server_name  localhost;
+
+            location / {
+                root   /usr/share/nginx/html;
+                index  index.html index.htm;
+            }
+
+            location = /welcome {
+                root /usr/share/nginx/html;
+                try_files /welcome/index.html =404;
+            }
+
+            location /welcome/ {
+                root   /usr/share/nginx/html;
+                index  index.html index.htm;
+                try_files $uri $uri/ /welcome/index.html;
+            }
+
+            location = /podinfo {
+                root /usr/share/nginx/html;
+                try_files /podinfo/index.html =404;
+            }
+
+            location /podinfo/ {
+                root   /usr/share/nginx/html;
+                index  index.html index.htm;
+                try_files $uri $uri/ /podinfo/index.html;
+            }
+            
+            location /endpoint {
+                return 200 'Endpoint of payment-app is working!';
+            }
+
+            error_page   500 502 503 504  /50x.html;
+            location = /50x.html {
+                root   /usr/share/nginx/html;
+            }
+        }
+    }
+  
+  index.html: |
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>My Service</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f4f4f4;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                margin: 0;
+            }
+
+            .container {
+                background: white;
+                padding: 30px;
+                border-radius: 10px;
+                text-align: center;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            }
+
+            h1 {
+                color: #326CE5;
+            }
+
+            p {
+                font-size: 18px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Welcome to Payment Service</h1>
+            <p><strong>Service:</strong> Payment Service</p>
+            <p>This page is being served by NGINX.</p>
+        </div>
+    </body>
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: checkout-app-config
+data:
+  nginx.conf: |
+    user  nginx;
+    worker_processes  auto;
+
+    error_log  /var/log/nginx/error.log notice;
+    pid        /var/run/nginx.pid;
+
+    events {
+        worker_connections  1024;
+    }
+
+    http {
+        include       /etc/nginx/mime.types;
+        default_type  application/octet-stream;
+
+        log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                          '$status $body_bytes_sent "$http_referer" '
+                          '"$http_user_agent" "$http_x_forwarded_for"';
+
+        access_log  /var/log/nginx/access.log  main;
+
+        sendfile        on;
+        #tcp_nopush     on;
+
+        keepalive_timeout  65;
+
+        #gzip  on;
+
+        server {
+            listen       80;
+            server_name  localhost;
+
+            location / {
+                root   /usr/share/nginx/html;
+                index  index.html index.htm;
+            }
+
+            location = /welcome {
+                root /usr/share/nginx/html;
+                try_files /welcome/index.html =404;
+            }
+
+            location /welcome/ {
+                root   /usr/share/nginx/html;
+                index  index.html index.htm;
+                try_files $uri $uri/ /welcome/index.html;
+            }
+
+            location = /podinfo {
+                root /usr/share/nginx/html;
+                try_files /podinfo/index.html =404;
+            }
+
+            location /podinfo/ {
+                root   /usr/share/nginx/html;
+                index  index.html index.htm;
+                try_files $uri $uri/ /podinfo/index.html;
+            }
+            
+            location /endpoint {
+                return 200 'Endpoint of checkout-app is working!';
+            }
+
+            error_page   500 502 503 504  /50x.html;
+            location = /50x.html {
+                root   /usr/share/nginx/html;
+            }
+        }
+    }
+
+  index.html: |
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>My Service</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f4f4f4;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                margin: 0;
+            }
+
+            .container {
+                background: white;
+                padding: 30px;
+                border-radius: 10px;
+                text-align: center;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            }
+
+            h1 {
+                color: #326CE5;
+            }
+
+            p {
+                font-size: 18px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Welcome to Checkout Service</h1>
+            <p><strong>Service:</strong> Checkout Service</p>
+            <p>This page is being served by NGINX.</p>
+        </div>
+    </body>

@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: canary-test-v1
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: canary-app.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: canary-test-v1
+            port:
+              number: 80

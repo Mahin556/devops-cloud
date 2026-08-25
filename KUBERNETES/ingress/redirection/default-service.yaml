@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: default-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: default-app
+  template:
+    metadata:
+      labels:
+        app: default-app
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        command:
+        - sh
+        - -c
+        - |
+          echo "Hello from DEFAULT service" > /usr/share/nginx/html/index.html
+          nginx -g 'daemon off;'
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: default-service
+spec:
+  selector:
+    app: default-app
+  ports:
+  - port: 80

@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payment-app
+  template:
+    metadata:
+      labels:
+        app: payment-app
+    spec:
+      volumes:
+      - name: nginx-config
+        configMap:
+          name: payment-service-config
+          items:
+          - key: nginx.conf
+            path: nginx.conf
+      containers:
+      - name: nginx
+        image: nginx
+        command:
+        - sh
+        - -c
+        - |
+          mkdir -p /usr/share/nginx/html/payment
+          echo "Hello from PAYMENT service" > /usr/share/nginx/html/payment/index.html
+          nginx -g 'daemon off;'
+        volumeMounts:
+        - name: nginx-config
+          mountPath: /etc/nginx/nginx.conf
+          subPath: nginx.conf
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment-service
+spec:
+  selector:
+    app: payment-app
+  ports:
+  - port: 80

@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: canary-test-v1
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: canary-test-v1
+  template:
+    metadata:
+      labels:
+        app: canary-test-v1
+    spec:
+      containers:
+      - name: app
+        image: hashicorp/http-echo:1.0
+        args:
+        - "-text=VERSION 1"
+        ports:
+        - containerPort: 5678

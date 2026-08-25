@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: rewrite-demo
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: demo.local
+    http:
+      paths:
+      - path: /newpath
+        pathType: Prefix
+        backend:
+          service:
+            name: new-service
+            port:
+              number: 80
+      - path: /oldpath #Backend service should support both /oldpath and /oldpath/ as ingress can match both but backend service will need to support both. In this case, we are using nginx configmap to support both.
+        pathType: Prefix
+        backend:
+          service:
+            name: old-service
+            port:
+              number: 80
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: default-service
+            port:
+              number: 80
+

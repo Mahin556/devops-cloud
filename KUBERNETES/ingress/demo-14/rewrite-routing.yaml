@@ -1,0 +1,35 @@
+# rewrite-routing.yaml
+# Strip the path prefix before forwarding to backends
+# Path Routing with URL Rewriting
+# Backend services often expect requests at their root path. If your API service does not know about the /api prefix, you need to strip it.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: rewrite-routing
+  annotations:
+    # Use regex for path matching
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    # Rewrite the URL to strip the prefix
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: myapp.example.com
+      http:
+        paths:
+          # /api/users -> backend receives /users
+          - path: /api(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: api-service
+                port:
+                  number: 80
+          # /docs/getting-started -> backend receives /getting-started
+          - path: /docs(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: docs-service
+                port:
+                  number: 80

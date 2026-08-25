@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: old-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: old-app
+  template:
+    metadata:
+      labels:
+        app: old-app
+    spec:
+      volumes:
+      - name: nginx-config
+        configMap:
+          name: old-service-config
+          items:
+          - key: nginx.conf
+            path: nginx.conf
+      containers:
+      - name: nginx
+        image: nginx
+        command:
+        - sh
+        - -c
+        - |
+          mkdir -p /usr/share/nginx/html/oldpath
+          echo "Hello from OLD service" > /usr/share/nginx/html/oldpath/index.html
+          nginx -g 'daemon off;'
+        volumeMounts:
+        - name: nginx-config
+          mountPath: /etc/nginx/nginx.conf
+          subPath: nginx.conf
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: old-service
+spec:
+  selector:
+    app: old-app
+  ports:
+  - port: 80

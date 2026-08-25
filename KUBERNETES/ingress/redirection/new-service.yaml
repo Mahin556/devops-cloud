@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: new-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: new-app
+  template:
+    metadata:
+      labels:
+        app: new-app
+    spec:
+      volumes:
+      - name: nginx-config
+        configMap:
+          name: new-service-config
+          items:
+          - key: nginx.conf
+            path: nginx.conf
+      containers:
+      - name: nginx
+        image: nginx
+        command:
+        - sh
+        - -c
+        - |
+          mkdir -p /usr/share/nginx/html/newpath
+          echo "Hello from NEW service" > /usr/share/nginx/html/newpath/index.html
+          nginx -g 'daemon off;'
+        volumeMounts:
+        - name: nginx-config
+          mountPath: /etc/nginx/nginx.conf
+          subPath: nginx.conf
+      
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: new-service
+spec:
+  selector:
+    app: new-app
+  ports:
+  - port: 80

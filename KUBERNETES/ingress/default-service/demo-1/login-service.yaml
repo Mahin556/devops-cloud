@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: login-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: login-app
+  template:
+    metadata:
+      labels:
+        app: login-app
+    spec:
+      volumes:
+      - name: nginx-config
+        configMap:
+          name: login-service-config
+          items:
+          - key: nginx.conf
+            path: nginx.conf
+      containers:
+      - name: nginx
+        image: nginx
+        command:
+        - sh
+        - -c
+        - |
+          mkdir -p /usr/share/nginx/html/login
+          echo "Hello from LOGIN service" > /usr/share/nginx/html/login/index.html
+          nginx -g 'daemon off;'
+        volumeMounts:
+        - name: nginx-config
+          mountPath: /etc/nginx/nginx.conf
+          subPath: nginx.conf
+      
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: login-service
+spec:
+  selector:
+    app: login-app
+  ports:
+  - port: 80

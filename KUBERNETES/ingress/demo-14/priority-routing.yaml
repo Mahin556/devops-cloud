@@ -1,0 +1,50 @@
+# priority-routing.yaml
+# Demonstrate path priority rules
+# Path Priority and Ordering
+# When multiple paths match a request, keep these rules in mind:
+
+# Longer matching paths take priority over shorter ones
+# If two paths are otherwise equally matched, Exact matches take priority over Prefix matches
+# With ingress-nginx, if the same host and path are defined in multiple Ingress resources, the oldest rule wins
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: priority-routing
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: myapp.example.com
+      http:
+        paths:
+          # Exact match: highest priority for /api/health
+          - path: /api/health
+            pathType: Exact
+            backend:
+              service:
+                name: health-service
+                port:
+                  number: 80
+          # Longer prefix: higher priority than /api
+          - path: /api/v2
+            pathType: Prefix
+            backend:
+              service:
+                name: api-v2-service
+                port:
+                  number: 80
+          # Shorter prefix: lower priority
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: api-v1-service
+                port:
+                  number: 80
+          # Catch-all: lowest priority
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend-service
+                port:
+                  number: 80

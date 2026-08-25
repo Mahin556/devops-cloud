@@ -1,0 +1,40 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: demo1
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  ingressClassName: nginx
+  defaultBackend:
+    service:
+      name: default-service
+      port:
+        number: 80
+  rules:
+  - host: app.example.com
+    http:
+      paths:
+      - path: /login
+        pathType: Prefix
+        backend:
+          service:
+            name: login-service
+            port:
+              number: 80
+
+      - path: /payment
+        pathType: Prefix
+        backend:
+          service:
+            name: payment-service
+            port:
+              number: 80
+
+      # - path: /.* #Same as default backend, so commented out. If you want to use this, you can uncomment it and remove the default backend section above.
+      #   pathType: ImplementationSpecific
+      #   backend:
+      #     service:
+      #       name: default-service
+      #       port:
+      #         number: 80

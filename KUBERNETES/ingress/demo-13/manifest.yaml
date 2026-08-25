@@ -1,0 +1,293 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: login-app-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: login-app
+  template:
+    metadata:
+      labels:
+        app: login-app
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+        command:
+        - /bin/sh
+        - -c
+        - |
+          echo 'welcome to my login app!' > /usr/share/nginx/html/index.html
+
+          mkdir -p /usr/share/nginx/html/podinfo
+
+          cat > /usr/share/nginx/html/podinfo/index.html <<EOF
+          <!DOCTYPE html>
+          <html>
+          <body>
+          <h1>Kubernetes Demo</h1>
+          <p>Pod: ${POD_NAME}</p>
+          <p>Service: ${SERVICE_NAME}</p>
+          <p>Namespace: ${POD_NAMESPACE}</p>
+          <p>IP: ${POD_IP}</p>
+          </body>
+          </html>
+          EOF
+
+          exec nginx -g "daemon off;"
+        env:
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: POD_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+          - name: SERVICE_NAME
+            value: login-app-service
+        volumeMounts:
+        - name: nginx-config-volume
+          mountPath: /etc/nginx/nginx.conf
+          subPath: nginx.conf  # Ensure this matches the filename in the ConfigMap
+        - name: index-volume
+          mountPath: /usr/share/nginx/html/welcome/index.html
+          subPath: index.html  # Ensure this matches the filename in the ConfigMap
+        # - name: podinfo-volume
+        #   mountPath: /usr/share/nginx/html/podinfo/
+      volumes:
+      - name: nginx-config-volume
+        configMap:
+          name: login-app-config
+          items:
+            - key: nginx.conf
+              path: nginx.conf
+      - name: index-volume
+        configMap:
+          name: login-app-config
+          items:
+            - key: index.html
+              path: index.html
+      # - name: podinfo-volume
+      #   configMap:
+      #     name: podinfo-app-config
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-app-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payment-app
+  template:
+    metadata:
+      labels:
+        app: payment-app
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+        command:
+        - /bin/sh
+        - -c
+        - |
+          echo 'welcome to my payment app!' > /usr/share/nginx/html/index.html
+
+          mkdir -p /usr/share/nginx/html/podinfo
+
+          cat > /usr/share/nginx/html/podinfo/index.html <<EOF
+          <!DOCTYPE html>
+          <html>
+          <body>
+          <h1>Kubernetes Demo</h1>
+          <p>Pod: ${POD_NAME}</p>
+          <p>Service: ${SERVICE_NAME}</p>
+          <p>Namespace: ${POD_NAMESPACE}</p>
+          <p>IP: ${POD_IP}</p>
+          </body>
+          </html>
+          EOF
+
+          exec nginx -g "daemon off;"
+        env:
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: POD_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+          - name: SERVICE_NAME
+            value: payment-app-service
+        volumeMounts:
+        - name: nginx-config-volume
+          mountPath: /etc/nginx/nginx.conf
+          subPath: nginx.conf  # Ensure this matches the filename in the ConfigMap
+        - name: index-volume
+          mountPath: /usr/share/nginx/html/welcome/index.html
+          subPath: index.html  # Ensure this matches the filename in the ConfigMap
+        # - name: podinfo-volume
+        #   mountPath: /usr/share/nginx/html/podinfo/
+      volumes:
+      - name: nginx-config-volume
+        configMap:
+          name: payment-app-config
+          items:
+            - key: nginx.conf
+              path: nginx.conf
+      - name: index-volume
+        configMap:
+          name: payment-app-config
+          items:
+            - key: index.html
+              path: index.html
+      # - name: podinfo-volume
+      #   configMap:
+      #     name: podinfo-app-config
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: checkout-app-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: checkout-app
+  template:
+    metadata:
+      labels:
+        app: checkout-app
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+        command:
+        - /bin/sh
+        - -c
+        - |
+          echo 'welcome to my checkout app!' > /usr/share/nginx/html/index.html
+
+          mkdir -p /usr/share/nginx/html/podinfo
+
+          cat > /usr/share/nginx/html/podinfo/index.html <<EOF
+          <!DOCTYPE html>
+          <html>
+          <body>
+          <h1>Kubernetes Demo</h1>
+          <p>Pod: ${POD_NAME}</p>
+          <p>Service: ${SERVICE_NAME}</p>
+          <p>Namespace: ${POD_NAMESPACE}</p>
+          <p>IP: ${POD_IP}</p>
+          </body>
+          </html>
+          EOF
+
+          exec nginx -g "daemon off;"
+        env:
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: POD_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+          - name: SERVICE_NAME
+            value: checkout-app-service
+        volumeMounts:
+        - name: nginx-config-volume
+          mountPath: /etc/nginx/nginx.conf
+          subPath: nginx.conf  # Ensure this matches the filename in the ConfigMap
+        - name: index-volume
+          mountPath: /usr/share/nginx/html/welcome/index.html
+          subPath: index.html  # Ensure this matches the filename in the ConfigMap
+        # - name: podinfo-volume
+        #   mountPath: /usr/share/nginx/html/podinfo/
+      volumes:
+      - name: nginx-config-volume
+        configMap:
+          name: checkout-app-config
+          items:
+            - key: nginx.conf
+              path: nginx.conf
+      - name: index-volume
+        configMap:
+          name: checkout-app-config
+          items:
+            - key: index.html
+              path: index.html
+      # - name: podinfo-volume
+      #   configMap:
+      #     name: podinfo-app-config
+
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: login-app-service
+spec:
+  selector:
+    app: login-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment-app-service
+spec:
+  selector:
+    app: payment-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: checkout-app-service
+spec:
+  selector:
+    app: checkout-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+

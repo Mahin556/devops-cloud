@@ -1,0 +1,33 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: redirect-demo
+  annotations:
+    nginx.ingress.kubernetes.io/permanent-redirect: http://demo.local/newpath
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: demo.local
+    http:
+      paths:
+      - path: /oldpath(/|$) #ingress can match /oldpath /oldpath/ both but backend service will need to support both. In this case, we are using nginx configmap to support both.
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: old-service
+            port:
+              number: 80
+      - path: /newpath(/|$) #ingress can match /newpath /newpath/ both but backend service will need to support both. In this case, we are using nginx configmap to support both.
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: new-service
+            port:
+              number: 80
+      - path: /
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: default-service
+            port:
+              number: 80

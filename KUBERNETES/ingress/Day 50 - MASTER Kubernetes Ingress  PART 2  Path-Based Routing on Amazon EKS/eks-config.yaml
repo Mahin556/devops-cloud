@@ -1,0 +1,58 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+<<<<<<< HEAD
+  name: cwvj-ingress-demo
+  region: us-east-2
+  tags:
+    owner: varun-joshi
+    bu: cwvj
+    project: ingress-demo
+
+availabilityZones:
+  - us-east-2a
+  - us-east-2b
+=======
+  name: mahin-ingress-demo
+  region: ap-south-1
+  tags:
+    owner: mahin-raza
+    bu: cwmr
+    project: ingress-demo
+
+availabilityZones:
+  - ap-south-1a
+  - ap-south-1b
+>>>>>>> 8b31efea7da9bad8728e188cecbbc41bc17a1137
+
+iam:
+  withOIDC: true
+
+managedNodeGroups:
+<<<<<<< HEAD
+  - name: cwvj-eks-priv-ng
+    instanceType: t3.small
+    minSize: 4
+    maxSize: 4
+=======
+  - name: cwmr-eks-priv-ng
+    instanceType: t3.small
+    minSize: 2
+    maxSize: 3
+>>>>>>> 8b31efea7da9bad8728e188cecbbc41bc17a1137
+    privateNetworking: true
+    volumeSize: 20
+    iam:
+      withAddonPolicies:
+        autoScaler: true
+        externalDNS: false
+        certManager: yes
+        ebs: false
+        fsx: false
+        efs: false
+        albIngress: true
+        xRay: false
+        cloudWatch: false
+    labels:
+      lifecycle: ec2-autoscaler

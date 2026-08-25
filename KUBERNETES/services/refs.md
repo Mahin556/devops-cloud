@@ -1,0 +1,11 @@
+- https://www.youtube.com/watch?v=92NB8oQBtnc&ab_channel=CloudWithVarJosh
+- https://technos.medium.com/kubernetes-services-for-absolute-beginners-nodeport-139b7060fe3
+- https://www.geeksforgeeks.org/devops/kubernetes-cluster-ip-vs-node-port/ *
+- https://www.geeksforgeeks.org/devops/kubernetes-services/ *
+- https://www.tutorialspoint.com/kubernetes/kubernetes_service.htm
+- https://spacelift.io/blog/kubernetes-cheat-sheet
+- https://www.geeksforgeeks.org/devops/kubernetes-nodeport-service/
+- [KIND Extra Port Mappings](https://kind.sigs.k8s.io/docs/user/configuration/#extra-port-mappings)  
+- [Kubernetes Services Documentation](https://kubernetes.io/docs/concepts/services-networking/service/)  
+- https://youtu.be/tHAQWLKMTB0
+- [Kind LB](https://kind.sigs.k8s.io/docs/user/loadbalancer)

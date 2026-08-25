@@ -1,0 +1,80 @@
+# docker-compose.yml
+version: "3.8"
+
+services:
+  etcd1:
+    image: quay.io/coreos/etcd:v3.5.30
+    container_name: etcd1
+    command:
+      - etcd
+      - --name=etcd1
+      - --data-dir=/etcd-data
+      - --listen-client-urls=http://0.0.0.0:2379
+      - --advertise-client-urls=http://etcd1:2379
+      - --listen-peer-urls=http://0.0.0.0:2380
+      - --initial-advertise-peer-urls=http://etcd1:2380
+      - --initial-cluster=etcd1=http://etcd1:2380,etcd2=http://etcd2:2380,etcd3=http://etcd3:2380
+      - --initial-cluster-state=new
+      - --initial-cluster-token=etcd-cluster-1
+    ports:
+      - "2379:2379"
+    volumes:
+      - etcd1_data:/etcd-data
+    networks:
+      - etcd-net
+    healthcheck:
+      test: ["CMD", "etcdctl", "endpoint", "health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  etcd2:
+    image: quay.io/coreos/etcd:v3.5.30
+    container_name: etcd2
+    command:
+      - etcd
+      - --name=etcd2
+      - --data-dir=/etcd-data
+      - --listen-client-urls=http://0.0.0.0:2379
+      - --advertise-client-urls=http://etcd2:2379
+      - --listen-peer-urls=http://0.0.0.0:2380
+      - --initial-advertise-peer-urls=http://etcd2:2380
+      - --initial-cluster=etcd1=http://etcd1:2380,etcd2=http://etcd2:2380,etcd3=http://etcd3:2380
+      - --initial-cluster-state=new
+      - --initial-cluster-token=etcd-cluster-1
+    ports:
+      - "2381:2379"
+    volumes:
+      - etcd2_data:/etcd-data
+    networks:
+      - etcd-net
+
+  etcd3:
+    image: quay.io/coreos/etcd:v3.5.30
+    container_name: etcd3
+    command:
+      - etcd
+      - --name=etcd3
+      - --data-dir=/etcd-data
+      - --listen-client-urls=http://0.0.0.0:2379
+      - --advertise-client-urls=http://etcd3:2379
+      - --listen-peer-urls=http://0.0.0.0:2380
+      - --initial-advertise-peer-urls=http://etcd3:2380
+      - --initial-cluster=etcd1=http://etcd1:2380,etcd2=http://etcd2:2380,etcd3=http://etcd3:2380
+      - --initial-cluster-state=new
+      - --initial-cluster-token=etcd-cluster-1
+    ports:
+      - "2382:2379"
+    volumes:
+      - etcd3_data:/etcd-data
+    networks:
+      - etcd-net
+
+networks:
+  etcd-net:
+    driver: bridge
+
+volumes:
+  etcd1_data:
+  etcd2_data:
+  etcd3_data:

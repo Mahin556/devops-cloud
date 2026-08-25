@@ -1,0 +1,62 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  # Base Box
+  config.vm.box = "bento/ubuntu-22.04"
+
+
+  config.vm.provision "shell", path: "bootstrap.sh"
+
+  # =====================================
+  # Kubernetes Control Plane
+  # =====================================
+  config.vm.define "master" do |node|
+    node.vm.hostname = "master"
+
+    node.vm.network "public_network",
+      ip: "192.168.1.50",
+      netmask: "255.255.255.0",
+      gateway: "192.168.1.1"
+
+    node.vm.provider "virtualbox" do |vb|
+      vb.name = "k8s-master"
+      vb.memory = 2048
+      vb.cpus = 2
+    end
+  end
+
+  # =====================================
+  # Kubernetes Worker Node
+  # =====================================
+  config.vm.define "worker-1" do |node|
+    node.vm.hostname = "worker-1"
+
+    node.vm.network "public_network",
+      ip: "192.168.1.51",
+      netmask: "255.255.255.0",
+      gateway: "192.168.1.1"
+
+    node.vm.provider "virtualbox" do |vb|
+      vb.name = "k8s-worker-1"
+      vb.memory = 2048
+      vb.cpus = 2
+    end
+  end
+
+  config.vm.define "worker-2" do |node|
+    node.vm.hostname = "worker-2"
+
+    node.vm.network "public_network",
+      ip: "192.168.1.52",
+      netmask: "255.255.255.0",
+      gateway: "192.168.1.1"
+
+    node.vm.provider "virtualbox" do |vb|
+      vb.name = "k8s-worker-2"
+      vb.memory = 2048
+      vb.cpus = 2
+    end
+  end
+
+end

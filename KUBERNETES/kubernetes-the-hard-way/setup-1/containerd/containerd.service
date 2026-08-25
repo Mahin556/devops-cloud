@@ -1,0 +1,428 @@
+# Copyright The containerd Authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+#
+# ============================================================================
+# CONTAINERD SYSTEMD SERVICE
+# ============================================================================
+#
+# This file tells systemd how to manage the containerd container runtime.
+#
+# containerd is a container runtime that:
+#   - Pulls container images
+#   - Manages container lifecycle
+#   - Creates and manages containers through OCI runtimes such as runc
+#   - Manages container networking/storage integration
+#   - Provides the CRI interface used by Kubernetes
+#
+# Kubernetes architecture:
+#
+#   kubelet
+#      |
+#      | CRI
+#      v
+#   containerd
+#      |
+#      v
+#   containerd-shim
+#      |
+#      v
+#   runc
+#      |
+#      v
+#   Linux container
+#
+# systemd is responsible for starting, stopping, restarting, and
+# supervising the containerd process.
+#
+# ============================================================================
+
+
+[Unit]
+
+# Human-readable description of the service.
+#
+# This description is displayed when running:
+#
+#   systemctl status containerd
+#
+# Example:
+#
+#   containerd.service - containerd container runtime
+#
+Description=containerd container runtime
+
+
+# Provides documentation information for the service.
+#
+# This does not start or configure containerd.
+# It simply tells systemd/users where the documentation is located.
+#
+Documentation=https://containerd.io
+
+
+# Defines service startup ordering.
+#
+# It means containerd should be started AFTER:
+#
+#   network.target
+#   dbus.service
+#
+# IMPORTANT:
+# After= does NOT start these services.
+#
+# It only establishes the startup order.
+#
+# Example:
+#
+#   network.target
+#        |
+#        v
+#   containerd.service
+#
+After=network.target dbus.service
+
+
+# ============================================================================
+# SERVICE SECTION
+# ============================================================================
+#
+# This section defines how systemd should actually start and manage
+# the containerd process.
+#
+
+[Service]
+
+
+# ----------------------------------------------------------------------------
+# ExecStartPre
+# ----------------------------------------------------------------------------
+#
+# This command runs BEFORE the main containerd process starts.
+#
+# /sbin/modprobe overlay
+#
+# loads the Linux OverlayFS kernel module.
+#
+# OverlayFS is commonly used by container runtimes to construct a
+# container's writable filesystem from multiple image layers.
+#
+# Example:
+#
+#   Container image
+#       |
+#       +-- Layer 1
+#       +-- Layer 2
+#       +-- Layer 3
+#       |
+#       v
+#   OverlayFS
+#       |
+#       v
+#   Container filesystem
+#
+# The '-' before the command is important:
+#
+#   ExecStartPre=-/sbin/modprobe overlay
+#                 ^
+#                 |
+#              ignore failure
+#
+# The '-' tells systemd:
+#
+#   "If this command fails, don't consider the service startup failed."
+#
+# This is useful because the overlay module might already be loaded,
+# built into the kernel, or otherwise not need to be loaded manually.
+#
+ExecStartPre=-/sbin/modprobe overlay
+
+
+# ----------------------------------------------------------------------------
+# ExecStart
+# ----------------------------------------------------------------------------
+#
+# This is the MAIN command used to start containerd.
+#
+# systemd executes:
+#
+#   /usr/local/bin/containerd
+#
+# This starts the containerd daemon.
+#
+# containerd then performs tasks such as:
+#
+#   - Image management
+#   - Container lifecycle management
+#   - Snapshot/storage management
+#   - Runtime management
+#   - CRI communication for Kubernetes
+#
+# Check the binary with:
+#
+#   ls -l /usr/local/bin/containerd
+#
+# Check version:
+#
+#   /usr/local/bin/containerd --version
+#
+ExecStart=/usr/local/bin/containerd
+
+
+# ----------------------------------------------------------------------------
+# Type=notify
+# ----------------------------------------------------------------------------
+#
+# Tells systemd that containerd uses systemd's notification mechanism
+# to tell systemd when it has successfully initialized.
+#
+# Startup flow:
+#
+#   systemd
+#      |
+#      | starts containerd
+#      v
+#   containerd
+#      |
+#      | initialization
+#      |
+#      | READY notification
+#      v
+#   systemd knows service is ready
+#
+# This is better than simply assuming that the process is ready
+# immediately after it starts.
+#
+Type=notify
+
+
+# ----------------------------------------------------------------------------
+# Delegate=yes
+# ----------------------------------------------------------------------------
+#
+# VERY IMPORTANT for container runtimes.
+#
+# Linux uses cgroups (control groups) to control and account for resources
+# such as:
+#
+#   - CPU
+#   - Memory
+#   - Number of processes
+#   - I/O
+#
+# containerd needs to create/manage cgroups for containers.
+#
+# With:
+#
+#   Delegate=yes
+#
+# systemd delegates the appropriate cgroup subtree to containerd,
+# allowing containerd to manage cgroups for containers without systemd
+# interfering with that hierarchy.
+#
+# Conceptually:
+#
+#   systemd
+#      |
+#      +-- containerd
+#             |
+#             +-- container-A cgroup
+#             |
+#             +-- container-B cgroup
+#             |
+#             +-- container-C cgroup
+#
+# This is especially important on modern Linux systems using cgroup v2.
+#
+# Kubernetes also relies heavily on cgroups for resource management.
+#
+Delegate=yes
+
+
+# ----------------------------------------------------------------------------
+# KillMode=process
+# ----------------------------------------------------------------------------
+#
+# Controls how systemd terminates processes when stopping the service.
+#
+# "process" tells systemd to target the main containerd process rather
+# than automatically killing every process associated with the service's
+# cgroup.
+#
+# This is important because containerd can manage other processes such as:
+#
+#   containerd
+#       |
+#       +-- containerd-shim
+#              |
+#              +-- container
+#
+# The container runtime has its own process-management responsibilities.
+#
+KillMode=process
+
+
+# ----------------------------------------------------------------------------
+# Restart=always
+# ----------------------------------------------------------------------------
+#
+# Tells systemd to restart containerd if it exits.
+#
+# Example:
+#
+#   containerd
+#       |
+#       X
+#     crash
+#       |
+#       v
+#   systemd detects failure
+#       |
+#       v
+#   restart containerd
+#
+# This provides automatic recovery of the container runtime.
+#
+Restart=always
+
+
+# ----------------------------------------------------------------------------
+# RestartSec=5
+# ----------------------------------------------------------------------------
+#
+# Wait 5 seconds before restarting containerd.
+#
+# Without a delay, a continuously crashing service could be restarted
+# immediately over and over again.
+#
+# Example:
+#
+#   containerd crashes
+#       |
+#       v
+#   wait 5 seconds
+#       |
+#       v
+#   restart
+#
+RestartSec=5
+
+
+# ----------------------------------------------------------------------------
+# LimitNPROC=infinity
+# ----------------------------------------------------------------------------
+#
+# Controls the maximum number of processes/tasks that can be associated
+# with this service from the systemd resource-limit perspective.
+#
+# "infinity" means systemd does not impose a finite limit here.
+#
+# Container workloads can potentially involve a large number of processes,
+# so an unnecessarily small process limit could cause problems.
+#
+LimitNPROC=infinity
+
+
+# ----------------------------------------------------------------------------
+# LimitCORE=infinity
+# ----------------------------------------------------------------------------
+#
+# Controls the maximum size of core dump files generated for the service.
+#
+# Core dumps can be useful for debugging application/runtime crashes.
+#
+# "infinity" means systemd does not impose a finite core-size limit here.
+#
+LimitCORE=infinity
+
+
+# ----------------------------------------------------------------------------
+# TasksMax=infinity
+# ----------------------------------------------------------------------------
+#
+# Controls the maximum number of tasks that can exist in the service's
+# cgroup.
+#
+# A Linux task generally represents a process or thread.
+#
+# Container environments can create many processes and threads.
+# Therefore, containerd should not have an unnecessarily restrictive
+# task limit.
+#
+# "infinity" means no finite systemd TasksMax limit is imposed.
+#
+# This setting requires a sufficiently recent systemd version.
+#
+TasksMax=infinity
+
+
+# ----------------------------------------------------------------------------
+# OOMScoreAdjust=-999
+# ----------------------------------------------------------------------------
+#
+# OOM = Out Of Memory.
+#
+# If Linux runs out of memory, the kernel's OOM killer may terminate
+# processes to recover memory.
+#
+# Linux assigns processes an OOM score.
+#
+# Generally:
+#
+#   Higher OOM score -> more likely to be killed
+#   Lower OOM score  -> less likely to be killed
+#
+# Setting:
+#
+#   OOMScoreAdjust=-999
+#
+# makes containerd highly resistant to being selected by the OOM killer.
+#
+# This is desirable because containerd is a critical infrastructure
+# component. If containerd dies, management of running/new containers
+# can be affected.
+#
+OOMScoreAdjust=-999
+
+
+# ============================================================================
+# INSTALL SECTION
+# ============================================================================
+#
+# Defines how the service integrates with systemd boot targets.
+#
+
+[Install]
+
+
+# ----------------------------------------------------------------------------
+# WantedBy=multi-user.target
+# ----------------------------------------------------------------------------
+#
+# multi-user.target represents the normal multi-user/server operating state.
+#
+# When the service is enabled:
+#
+#   systemctl enable containerd
+#
+# systemd creates the necessary relationship so containerd starts during
+# the normal boot process.
+#
+# Check whether it is enabled:
+#
+#   systemctl is-enabled containerd
+#
+# Start manually:
+#
+#   systemctl start containerd
+#
+# Enable at boot:
+#
+#   systemctl enable containerd
+#
+# Enable AND start immediately:
+#
+#   systemctl enable --now containerd
+#
+WantedBy=multi-user.target

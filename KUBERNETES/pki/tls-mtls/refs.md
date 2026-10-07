@@ -1,0 +1,3 @@
+- [Watch the video](https://www.youtube.com/watch?v=MkGPyJqCkB4&ab_channel=CloudWithVarJosh)
+- [Day 31: TLS in Kubernetes MASTERCLASS | PART 1 | Mutual Auth (SSH), TLS 1.3, Types of CAs](https://www.youtube.com/watch?v=afQIvp5a0wM&ab_channel=CloudWithVarJosh)
+- [Day 32: TLS in Kubernetes MASTERCLASS | PART 2 | mTLS , kubeconfig & Kubernetes Context](https://www.youtube.com/watch?v=VBlI0IG4ReI&ab_channel=CloudWithVarJosh)

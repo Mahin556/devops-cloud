@@ -1,0 +1,18 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: host-wildcard-example
+  namespace: traefik-lab
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`*.example.com`)
+      kind: Rule
+      services:
+        - name: demo-service
+          port: 80
+
+# api.example.com
+# app.example.com
+# test.example.com

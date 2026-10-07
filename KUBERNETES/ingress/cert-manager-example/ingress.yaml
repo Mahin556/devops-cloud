@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+  name: example-app
+spec:
+  ingressClassName: traefik
+  tls:
+  - hosts:
+    - test.marceldempers.dev
+    secretName: secret-tls
+  rules:
+  - host: test.marceldempers.dev
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service: 
+            name: example-service
+            port: 
+              number: 80

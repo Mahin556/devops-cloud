@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: my-app
+  namespace: default
+spec:
+  ingressClassName: traefik
+  tls:
+  - hosts:
+    - nginx.mahinraza.online
+    secretName: wildcard-mahinraza-online
+  rules:
+    - host: nginx.mahinraza.online
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: nginx-svc-red
+                port:
+                  number: 80

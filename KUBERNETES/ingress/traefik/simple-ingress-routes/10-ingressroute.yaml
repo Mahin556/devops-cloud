@@ -1,0 +1,18 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: host-regexp-example
+  namespace: traefik-lab
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: HostRegexp(`^api-[a-z]+\.example\.com$`)
+      kind: Rule
+      services:
+        - name: demo-service
+          port: 80
+
+# api-dev.example.com
+# api-prod.example.com
+# api-test.example.com

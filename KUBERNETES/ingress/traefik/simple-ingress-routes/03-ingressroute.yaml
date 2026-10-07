@@ -1,0 +1,25 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: nginx
+  namespace: default
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`nginx-red.mahinraza.online`)
+      kind: Rule
+      services:
+        - name: nginx-svc-red
+          port: 80
+    - match: Host(`nginx-blue.mahinraza.online`)
+      kind: Rule
+      services:
+        - name: nginx-svc-blue
+          port: 80
+    - match: Host(`nginx-green.mahinraza.online`)
+      kind: Rule
+      services:
+        - name: nginx-svc-green
+          port: 80

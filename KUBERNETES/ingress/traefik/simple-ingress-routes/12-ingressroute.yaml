@@ -1,0 +1,20 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: path-prefix-example
+  namespace: traefik-lab
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`prefix.example.com`) && PathPrefix(`/products`)
+      kind: Rule
+      services:
+        - name: demo-service
+          port: 80
+
+# /products
+# /products/
+# /products/shoes
+# /products/shoes/31
+# /products-for-sale

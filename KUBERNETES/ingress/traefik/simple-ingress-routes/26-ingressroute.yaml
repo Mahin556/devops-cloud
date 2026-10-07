@@ -1,0 +1,135 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+
+metadata:
+  name: test-name
+  namespace: apps
+
+spec:
+
+  # ----------------------------------------------------------
+  # ENTRYPOINT
+  # ----------------------------------------------------------
+  # Which Traefik entryPoint accepts this traffic.
+  #
+  # Example:
+  #   web      -> HTTP :80
+  #   websecure -> HTTPS :443
+  # ----------------------------------------------------------
+  entryPoints:
+    - websecure
+
+  # ----------------------------------------------------------
+  # ROUTES
+  # ----------------------------------------------------------
+  routes:
+    - kind: Rule
+
+      # ------------------------------------------------------
+      # ROUTING RULE
+      # ------------------------------------------------------
+      # Request must have this hostname.
+      # ------------------------------------------------------
+      match: Host(`test.example.com`)
+
+      # ------------------------------------------------------
+      # MIDDLEWARE
+      # ------------------------------------------------------
+      # Middleware can modify/process the request before it
+      # reaches the backend.
+      # ------------------------------------------------------
+      middlewares:
+        - name: middleware1
+          namespace: apps
+
+      # ------------------------------------------------------
+      # PRIORITY
+      # ------------------------------------------------------
+      # Used to resolve overlapping routes.
+      # ------------------------------------------------------
+      priority: 10
+
+      # ------------------------------------------------------
+      # BACKEND SERVICES
+      # ------------------------------------------------------
+      services:
+        - kind: Service
+          # Kubernetes Service name
+          name: foo
+          # Kubernetes namespace
+          namespace: apps
+          # Service port
+          port: 80
+
+          # --------------------------------------------------
+          # FORWARDING
+          # --------------------------------------------------
+          # Send the original Host header to the backend.
+          passHostHeader: true
+
+          # --------------------------------------------------
+          # BACKEND SCHEME
+          # --------------------------------------------------
+          # HTTP or HTTPS connection from Traefik to backend.
+          # --------------------------------------------------
+          scheme: http
+
+          # --------------------------------------------------
+          # RESPONSE FORWARDING
+          # --------------------------------------------------
+          responseForwarding:
+            flushInterval: 1ms
+
+          # --------------------------------------------------
+          # STICKY SESSION
+          # --------------------------------------------------
+          # Keep a client connected to the same backend.
+          # --------------------------------------------------
+          sticky:
+            cookie:
+              name: cookie
+              httpOnly: true
+              secure: true
+
+          # --------------------------------------------------
+          # LOAD BALANCING STRATEGY
+          # --------------------------------------------------
+          strategy: wrr
+          weight: 10
+
+      # ------------------------------------------------------
+      # TLS
+      # ------------------------------------------------------
+      tls:
+        # Automatically obtain certificate using resolver.
+        certResolver: foo
+        # Domains for the generated certificate.
+        domains:
+          - main: example.net
+            sans:
+              - a.example.net
+              - b.example.net
+        # TLS configuration.
+        options:
+          name: opt
+          namespace: apps
+
+        # Kubernetes Secret containing certificate.
+        #
+        # Use this when supplying your own certificate instead
+        # of using certResolver.
+        #
+        # secretName: supersecret
+
+---
+
+  # All resources definition must be declared
+  # Prefixing with /foo
+  apiVersion: traefik.io/v1alpha1
+  kind: Middleware
+  metadata:
+    name: middleware1
+    namespace: apps
+  spec:
+    addPrefix:
+      prefix: /foo

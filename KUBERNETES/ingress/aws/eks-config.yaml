@@ -1,0 +1,38 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: mahin-ingress-demo
+  region: ap-south-1
+  tags:
+    owner: mahin-raza
+    bu: cwmr
+    project: ingress-demo
+
+availabilityZones:
+  - ap-south-1a
+  - ap-south-2b
+
+iam:
+  withOIDC: true
+
+managedNodeGroups:
+  - name: cwmr-eks-priv-ng
+    instanceType: t3.small
+    minSize: 2
+    maxSize: 3
+    privateNetworking: true
+    volumeSize: 20
+    iam:
+      withAddonPolicies:
+        autoScaler: true
+        externalDNS: false
+        certManager: yes
+        ebs: false
+        fsx: false
+        efs: false
+        albIngress: true
+        xRay: false
+        cloudWatch: false
+    labels:
+      lifecycle: ec2-autoscaler

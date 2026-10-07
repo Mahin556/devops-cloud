@@ -1,0 +1,17 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: header-regexp-example
+  namespace: traefik-lab
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`header-regexp.example.com`) && HeaderRegexp(`Content-Type`, `^application/(json|yaml)$`)
+      kind: Rule
+      services:
+        - name: demo-service
+          port: 80
+
+# Content-Type: application/json
+# Content-Type: application/yaml

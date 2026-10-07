@@ -1,0 +1,19 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: header-example
+  namespace: traefik-lab
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`header.example.com`) && Header(`X-Environment`, `production`)
+      kind: Rule
+      services:
+        - name: demo-service
+          port: 80
+
+# curl \
+#   -H "Host: header.example.com" \
+#   -H "X-Environment: production" \
+#   http://<TRAEFIK-IP>/

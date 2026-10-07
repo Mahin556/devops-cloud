@@ -1,0 +1,49 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: nginx
+  namespace: default
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`nginx-1.mahinraza.online`) || (Host(`nginx-2.mahinraza.online`) && Header(`From`, `main@example.com`))
+      kind: Rule
+      services:
+        - name: nginx-svc-blue
+          port: 80
+  tls:
+    secretName: wildcard-mahinraza-online
+
+# Host(`nginx-1.mahinraza.online`) --> Condition 1
+# (Host(`nginx-2.mahinraza.online`) && Header(`From`, `main@example.com`)) --> Condition 2
+
+# PASS
+# curl -k https://nginx-1.mahinraza.online
+# curl -k -H "From: main@example.com" https://nginx-1.mahinraza.online
+# <h1>I am <font color=BLUE>BLUE</font></h1>
+
+# PASS
+# curl -k -H "From: main@example.com" https://nginx-2.mahinraza.online
+# <h1>I am <font color=BLUE>BLUE</font></h1>
+
+# FAIL
+# curl -k -H "From: test@example.com" https://nginx-2.mahinraza.online
+# 404 page not found
+
+# PASS
+# curl -k https://nginx-1.mahinraza.online
+# <h1>I am <font color=BLUE>BLUE</font></h1>
+
+# FAIL
+# curl -k https://nginx-2.mahinraza.online
+# 404 page not found
+
+# PASS
+# curl -k -H "From: test@example.com" https://nginx-1.mahinraza.online
+# <h1>I am <font color=BLUE>BLUE</font></h1>
+
+# FAIL
+# curl -k -H "From: test-failed@demo.com" https://nginx-2.mahinraza.online
+# 404 page not found

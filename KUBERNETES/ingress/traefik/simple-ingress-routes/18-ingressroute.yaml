@@ -1,0 +1,15 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: client-ip-example
+  namespace: traefik-lab
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`clientip.example.com`) && ClientIP(`192.168.1.0/24`)
+      kind: Rule
+      services:
+        - name: demo-service
+          port: 80
+

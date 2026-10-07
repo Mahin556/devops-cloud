@@ -1,0 +1,32 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: myapp-gateway-api
+  namespace: default
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-issuer
+spec:
+  gatewayClassName: traefik
+  # Only Routes from the same namespace are allowed.
+  listeners:
+    - name: http
+      protocol: HTTP
+      port: 8000
+      allowedRoutes:
+        namespaces:
+          from: Same  #or All or Selector
+    
+    - name: https
+      protocol: HTTPS
+      hostname: myapp.mahinraza.online
+      port: 8443
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: myapp-secret-tls
+            namespace: default
+      allowedRoutes:
+        namespaces:
+          from: Same
+
+# A few moments later, cert-manager will create a Certificate. The Certificate is named after the Secret name myapp-secret-tls. The dnsNames field is set with the hostname field from the Gateway spec.

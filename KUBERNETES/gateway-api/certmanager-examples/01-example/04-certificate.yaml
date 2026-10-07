@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: example-app
+  namespace: default
+spec:
+  dnsNames:
+    - myapp.mahinraza.online
+  secretName: myapp-secret-tls
+  issuerRef:
+    name: letsencrypt-issuer
+    kind: ClusterIssuer

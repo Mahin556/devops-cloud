@@ -1,0 +1,24 @@
+accessLog:
+  # -- To enable access logs
+  enabled: true
+ports:
+  web: 
+    port: 8000 #Configure the port on which Traefik will listen for HTTP traffic
+    exposedPort: 80 #Service port that will be exposed to the outside world for HTTP traffic
+  websecure:
+    port: 8443 #Configure the port on which Traefik will listen for HTTPS traffic
+    exposedPort: 443 #Service port that will be exposed to the outside world for HTTPS traffic
+
+# we enable gateway-api features
+providers:
+  kubernetesGateway:
+    enabled: true
+    experimentalChannel: false
+
+# we disable gateway-api defaults because we want to provide our own
+gatewayClass:
+  enabled: false
+
+# we disable gateway-api defaults because we want to provide our own
+gateway:
+  enabled: false

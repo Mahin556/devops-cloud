@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+  labels:
+    app: my-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+        - name: my-app
+          image: nginx:latest
+          command:
+            - /bin/bash
+            - -c
+            - |
+                mkdir -p /usr/share/nginx/html/{startup,health,ready} \
+                && echo 'ok' > /usr/share/nginx/html/startup/index.html \
+                && echo 'ok' > /usr/share/nginx/html/health/index.html \
+                && echo 'ok' > /usr/share/nginx/html/ready/index.html \
+                && nginx -g 'daemon off;'
+
+          startupProbe:
+            httpGet:
+              path: /startup
+              port: 80
+            failureThreshold: 30
+            periodSeconds: 10
+
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+
+### References- https://devopscube.com/kubernetes-deployment-tutorial/

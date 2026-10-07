@@ -1,0 +1,36 @@
+[
+  {
+    "apiVersion": "abac.authorization.kubernetes.io/v1beta1",
+    "kind": "Policy",
+    "spec": {
+      "user": "seema",
+      "namespace": "default",
+      "resource": "pods",
+      "verb": "get"
+    }
+  },
+  {
+    "apiVersion": "abac.authorization.kubernetes.io/v1beta1",
+    "kind": "Policy",
+    "spec": {
+      "user": "seema",
+      "namespace": "default",
+      "resource": "pods",
+      "verb": "list"
+    }
+  },
+  {
+    "apiVersion": "abac.authorization.kubernetes.io/v1beta1",
+    "kind": "Policy",
+    "spec": {
+      "group": "system:masters"
+    }
+  },
+  {
+    "apiVersion": "abac.authorization.kubernetes.io/v1beta1",
+    "kind": "Policy",
+    "spec": {
+      "group": "system:authenticated"
+    }
+  }
+]

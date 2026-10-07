@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: demo-pod
+  namespace: default
+  labels:
+    ENV: prod
+spec:
+  containers:
+    - name: http
+      image: registry.k8s.io/e2e-test-images/agnhost:2.40
+      args: 
+      - liveness
+      livenessProbe:
+        httpGet:
+          path: /healthz
+          port: 8080
+        initialDelaySeconds: 5
+        periodSeconds: 5
+        failureThreshold: 3
+        successThreshold: 1
+      ports:
+      - containerPort: 8080
+
+      readinessProbe:
+        httpGet:
+          path: /healthz
+          port: 8080
+        initialDelaySeconds: 5
+        periodSeconds: 5
+        failureThreshold: 3
+        successThreshold: 1
+          

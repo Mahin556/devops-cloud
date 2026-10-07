@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: adapter-pod
+  labels:
+    run: adapter-pod
+spec:
+  volumes:
+    - name: logs
+      emptyDir: {}
+
+  containers:
+    - name: app
+      image: busybox
+      command:
+        - sh
+        - -c
+        - "while true; do echo 'ERROR|SomeTimestamp|something broke' >> /logs/app.log; sleep 3; done"
+      volumeMounts:
+        - name: logs
+          mountPath: /logs
+
+    - name: adapter
+      image: busybox
+      command:
+        - sh
+        - -c
+        - "while true; do cat /logs/app.log | sed 's/|/ /g'; sleep 3; done"
+      volumeMounts:
+        - name: logs
+          mountPath: /logs

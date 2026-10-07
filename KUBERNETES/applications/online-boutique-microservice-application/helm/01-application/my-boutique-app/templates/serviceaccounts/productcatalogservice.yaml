@@ -1,0 +1,16 @@
+{{- if .Values.productcatalogservice.enabled -}}
+{{- if .Values.productcatalogservice.serviceAccount.create -}}
+{{- $name := "productcatalogservice" -}}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "01-application.fullname" . }}-{{ $name }}
+  labels:
+    {{- include "01-application.metadataLabels" . | nindent 4 }}
+  {{- with .Values.productcatalogservice.serviceAccount.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+automountServiceAccountToken: {{ .Values.productcatalogservice.serviceAccount.automount }}
+{{- end -}}
+{{- end -}}

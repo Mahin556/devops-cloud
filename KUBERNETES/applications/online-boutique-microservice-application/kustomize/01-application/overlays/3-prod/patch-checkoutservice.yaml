@@ -1,0 +1,30 @@
+- op: add
+  path: /spec/template/spec/containers/0/env/-
+  value:
+    name: PRODUCT_CATALOG_SERVICE_ADDR
+    value: "myapp-productcatalogservice-prod:3550"
+- op: add
+  path: /spec/template/spec/containers/0/env/-
+  value:
+    name: SHIPPING_SERVICE_ADDR
+    value: "myapp-shippingservice-prod:50051"
+- op: add
+  path: /spec/template/spec/containers/0/env/-
+  value:
+    name: PAYMENT_SERVICE_ADDR
+    value: "myapp-paymentservice-prod:50051"
+- op: add
+  path: /spec/template/spec/containers/0/env/-
+  value:
+    name: EMAIL_SERVICE_ADDR
+    value: "myapp-emailservice-prod:5000"
+- op: add
+  path: /spec/template/spec/containers/0/env/-
+  value:
+    name: CURRENCY_SERVICE_ADDR
+    value: "myapp-currencyservice-prod:7000"
+- op: add
+  path: /spec/template/spec/containers/0/env/-
+  value:
+    name: CART_SERVICE_ADDR
+    value: "myapp-cartservice-prod:7070"

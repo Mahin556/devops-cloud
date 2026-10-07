@@ -1,0 +1,32 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+VAGRANTFILE_API_VERSION = "2"
+
+NODES = {
+  "etcd-1"   => { ip: "10.107.88.11", memory: 1024, cpus: 1 },
+  "etcd-2"   => { ip: "10.107.88.12", memory: 1024, cpus: 1 },
+  "etcd-3"   => { ip: "10.107.88.13", memory: 1024, cpus: 1 },
+  "master-1" => { ip: "10.107.88.21", memory: 2048, cpus: 2 },
+  "master-2" => { ip: "10.107.88.22", memory: 2048, cpus: 2 },
+  "lb"       => { ip: "10.107.88.30", memory: 512,  cpus: 1 },
+}
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  config.vm.box = "ubuntu/jammy64"
+  config.vm.box_check_update = false
+
+  NODES.each do |name, opts|
+    config.vm.define name do |node|
+      node.vm.hostname = name
+      node.vm.network "private_network", ip: opts[:ip]
+      node.vm.network "public_network", bridge: "en0: Wi-Fi"
+
+      node.vm.provider "virtualbox" do |vb|
+        vb.name   = name
+        vb.memory = opts[:memory]
+        vb.cpus   = opts[:cpus]
+      end
+    end
+  end
+end

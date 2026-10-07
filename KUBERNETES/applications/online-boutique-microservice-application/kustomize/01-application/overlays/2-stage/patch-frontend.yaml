@@ -1,0 +1,50 @@
+- op: add
+  path: /spec/template/spec/containers/0/env/-
+  value:
+    name: PRODUCT_CATALOG_SERVICE_ADDR
+    value: "myapp-productcatalogservice-stage:3550"
+- op: add
+  path: /spec/template/spec/containers/0/env/-
+  value:
+    name: RECOMMENDATION_SERVICE_ADDR
+    value: "myapp-recommendationservice-stage:8080"
+- op: add
+  path: /spec/template/spec/containers/0/env/-
+  value:
+    name: CHECKOUT_SERVICE_ADDR
+    value: "myapp-checkoutservice-stage:5050"
+- op: add
+  path: /spec/template/spec/containers/0/env/-
+  value:
+    name: AD_SERVICE_ADDR
+    value: "myapp-adservice-stage:9555"
+- op: add
+  path: /spec/template/spec/containers/0/env/-
+  value:
+    name: SHOPPING_ASSISTANT_SERVICE_ADDR
+    value: "myapp-shoppingassistantservice-stage:80"
+- op: add
+  path: /spec/template/spec/containers/0/env/-
+  value:
+    name: SHIPPING_SERVICE_ADDR
+    value: "myapp-shippingservice-stage:50051"
+- op: add
+  path: /spec/template/spec/containers/0/env/-
+  value:
+    name: PAYMENT_SERVICE_ADDR
+    value: "myapp-paymentservice-stage:50051"
+- op: add
+  path: /spec/template/spec/containers/0/env/-
+  value:
+    name: EMAIL_SERVICE_ADDR
+    value: "myapp-emailservice-stage:5000"
+- op: add
+  path: /spec/template/spec/containers/0/env/-
+  value:
+    name: CURRENCY_SERVICE_ADDR
+    value: "myapp-currencyservice-stage:7000"
+- op: add
+  path: /spec/template/spec/containers/0/env/-
+  value:
+    name: CART_SERVICE_ADDR
+    value: "myapp-cartservice-stage:7070"

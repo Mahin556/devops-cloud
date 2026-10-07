@@ -1,0 +1,16 @@
+{{- if .Values.rediscart.enabled -}}
+{{- if .Values.rediscart.serviceAccount.create -}}
+{{- $name := "rediscart" -}}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "01-application.fullname" . }}-{{ $name }}
+  labels:
+    {{- include "01-application.metadataLabels" . | nindent 4 }}
+  {{- with .Values.rediscart.serviceAccount.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+automountServiceAccountToken: {{ .Values.rediscart.serviceAccount.automount }}
+{{- end -}}
+{{- end -}}

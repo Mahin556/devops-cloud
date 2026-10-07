@@ -1,0 +1,103 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: myservice-cm
+data:
+  home.html: |
+    "/home/index.html" on service-a
+  index.html: |
+    "/" on service-a  
+  404.html: |
+    service-a 404 page
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: myservice-nginx.conf
+data:
+  nginx.conf: |
+    user  nginx;
+    worker_processes  1;
+    error_log  /var/log/nginx/error.log warn;
+    pid        /var/run/nginx.pid;
+    events {
+        worker_connections  1024;
+    }
+
+    http {
+        sendfile        on;
+        server {
+          listen       80;
+          server_name  localhost;
+
+          location / {
+              root   /usr/share/nginx/html;
+              index  index.html index.htm;
+          }
+
+          location /home {
+              root   /usr/share/nginx/html;
+              index  index.html index.htm;
+          }
+
+          error_page 404 /404.html;
+          error_page   500 502 503 504  /50x.html;
+          location = /50x.html {
+              root   /usr/share/nginx/html;
+          }
+        }
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myservice-deployment
+  labels:
+    app: myservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: myservice
+  template:
+    metadata:
+      labels:
+        app: myservice
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: html
+          mountPath: "/usr/share/nginx/html/"
+        - name: home
+          mountPath: "/usr/share/nginx/html/home/"
+        - name: config
+          mountPath: "/etc/nginx/"
+      volumes:
+      - name: html
+        configMap:
+          name: myservice-cm
+      - name: home
+        configMap:
+          name: myservice-cm
+          items:
+            - key: home.html
+              path: index.html
+      - name: config
+        configMap:
+          name: myservice-nginx.conf
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: myservice-svc
+spec:
+  selector:
+    app: myservice
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80

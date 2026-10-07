@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: checkoutservice
+spec:
+  template:
+    spec:
+      containers:
+        - name: checkoutservice
+          env:
+          - name: PRODUCT_CATALOG_SERVICE_ADDR
+            value: "myapp-productcatalogservice-dev:3550"
+          - name: SHIPPING_SERVICE_ADDR
+            value: "myapp-shippingservice-dev:50051"
+          - name: PAYMENT_SERVICE_ADDR
+            value: "myapp-paymentservice-dev:50051"
+          - name: EMAIL_SERVICE_ADDR
+            value: "myapp-emailservice-dev:5000"
+          - name: CURRENCY_SERVICE_ADDR
+            value: "myapp-currencyservice-dev:7000"
+          - name: CART_SERVICE_ADDR
+            value: "myapp-cartservice-dev:7070"

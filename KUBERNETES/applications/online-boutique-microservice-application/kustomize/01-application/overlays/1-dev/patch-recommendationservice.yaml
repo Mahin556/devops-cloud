@@ -1,0 +1,5 @@
+- op: add
+  path: /spec/template/spec/containers/0/env/-
+  value:
+    name: PRODUCT_CATALOG_SERVICE_ADDR
+    value: "myapp-productcatalogservice-dev:3550"

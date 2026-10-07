@@ -1,0 +1,1 @@
+CoreDNS is the cluster DNS server. Its configuration lives in the coredns ConfigMap in kube-system.

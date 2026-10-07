@@ -1,0 +1,52 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: etcd-backup
+  namespace: kube-system
+spec:
+  # Run every minute
+  schedule: "0 */6 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          nodeSelector:
+            kubernetes.io/hostname: cplane-01
+          tolerations:
+          - effect: NoSchedule
+            key: node-role.kubernetes.io/control-plane
+            operator: Exist
+          containers:
+          - name: hello
+            image: registry.k8s.io/etcd:3.6.8-0
+            command:
+            - etcdctl
+            args:
+            - snapshot
+            - save
+            - /backup/etcd-snapshot-$(POD_UID).db
+            - --endpoints=https://172.16.0.2:2379
+            - --cacert=/etc/kubernetes/pki/etcd/ca.crt
+            - --cert=/etc/kubernetes/pki/etcd/server.crt
+            - --key=/etc/kubernetes/pki/etcd/server.key
+            env: 
+            - name: ETCDCTL_API
+              value: "3"
+            - name: POD_UID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.uid
+            volumeMounts:
+              - name: backup-volume
+                mountPath: /backup
+              - name: etcd-certs
+                mountPath: /etc/kubernetes/pki/etcd
+                readOnly: true
+          volumes:
+          - name: backup-volume
+            hostPath:
+              path: /home/laborant/etcd-backup
+          - name: etcd-certs
+            hostPath:
+              path: /etc/kubernetes/pki/etcd
+          restartPolicy: OnFailure

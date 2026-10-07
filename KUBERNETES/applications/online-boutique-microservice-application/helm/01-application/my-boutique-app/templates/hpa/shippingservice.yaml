@@ -1,0 +1,50 @@
+{{- if .Values.shippingservice.enabled -}}
+{{- if .Values.shippingservice.autoscaling.enabled -}}
+{{- $name := "shippingservice" -}}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "01-application.fullname" . }}-{{ $name }}-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "01-application.fullname" . }}-{{ $name }}
+
+  minReplicas: {{ .Values.shippingservice.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.shippingservice.autoscaling.maxReplicas }}
+
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 30 #default is 0 seconds
+      policies:
+        - type: Pods
+          value: 1
+          periodSeconds: 10
+
+    scaleDown:
+      stabilizationWindowSeconds: 30 #default is 300 seconds
+      policies:
+        - type: Pods
+          value: 1
+          periodSeconds: 20
+
+  metrics:
+    {{- if .Values.shippingservice.autoscaling.targetCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.shippingservice.autoscaling.targetCPUUtilizationPercentage }}
+    {{ end }}
+    {{ if .Values.shippingservice.autoscaling.targetMemoryUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.shippingservice.autoscaling.targetMemoryUtilizationPercentage }}
+    {{ end }}
+{{- end -}}
+{{- end -}}

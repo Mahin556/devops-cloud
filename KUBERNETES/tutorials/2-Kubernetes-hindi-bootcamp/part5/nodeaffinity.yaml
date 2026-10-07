@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mypod
+spec:
+  containers:
+  - name: mycontainer
+    image: nginx
+  affinity:
+    nodeAffinity: # like nodeSelector, but more expressive and flexible, advanced version of nodeSelector(hard and soft constraints, anti-affinity, affinity)
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: "topology.kubernetes.io/region" # topology.kubernetes.io --> Prefix, not required but recommended | region --> key, can be anything
+            operator: In
+            values:
+            - "us-east-1"
+      preferredDuringSchedulingIgnoredDuringExecution: # IgnoredDuringExecution --> If labels of a node change/removed, the pod will not be evicted. 
+      - weight: 1
+        preference:
+          matchExpressions:
+          - key: "disktype"
+            operator: In
+            values:
+            - "ssd"
+
+# requiredDuringSchedulingRequiredDuringExecution --> In future, if the labels of a node change, the pod will be evicted.

@@ -1,0 +1,51 @@
+{{- if .Values.productcatalogservice.enabled -}}
+{{- if .Values.productcatalogservice.autoscaling.enabled -}}
+{{- $name := "productcatalogservice" -}}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "01-application.fullname" . }}-{{ $name }}-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "01-application.fullname" . }}-{{ $name }}
+
+  minReplicas: {{ .Values.productcatalogservice.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.productcatalogservice.autoscaling.maxReplicas }}
+
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 30 #default is 0 seconds
+      policies:
+        - type: Pods
+          value: 1
+          periodSeconds: 10
+
+    scaleDown:
+      stabilizationWindowSeconds: 30 #default is 300 seconds
+      policies:
+        - type: Pods
+          value: 1
+          periodSeconds: 20
+
+  metrics:
+    {{- if .Values.productcatalogservice.autoscaling.targetCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.productcatalogservice.autoscaling.targetCPUUtilizationPercentage }}
+    {{ end }}
+
+    {{ if .Values.productcatalogservice.autoscaling.targetMemoryUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.productcatalogservice.autoscaling.targetMemoryUtilizationPercentage }}
+    {{ end }}
+{{- end -}}
+{{- end -}}

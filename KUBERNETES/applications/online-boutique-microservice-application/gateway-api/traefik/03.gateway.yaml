@@ -1,0 +1,29 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: gateway-api
+  namespace: default
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-issuer
+spec:
+  gatewayClassName: traefik
+  # Only Routes from the same namespace are allowed.
+  listeners:
+    - name: http
+      protocol: HTTP
+      port: 80
+      allowedRoutes:
+        namespaces:
+          from: Same  #or All or Selector
+    
+    - name: https
+      protocol: HTTPS
+      port: 443
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: myapp-secret-tls
+            namespace: default
+      allowedRoutes:
+        namespaces:
+          from: Same

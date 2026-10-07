@@ -1,0 +1,184 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Reference to shared base
+resources:
+  - ../../base
+
+# Optional: Apply name prefix/suffix
+nameSuffix: -prod
+namePrefix: myapp-
+
+namespace: prod
+
+labels:
+  - pairs:
+      env: prod
+    includeSelectors: true
+
+images:
+- name: adservice
+  newName: mahinraza556/adservice
+  newTag: latest
+- name: cartservice
+  newName: mahinraza556/cartservice
+  newTag: latest
+- name: checkoutservice
+  newName: mahinraza556/checkoutservice
+  newTag: latest
+- name: currencyservice
+  newName: mahinraza556/currencyservice
+  newTag: latest
+- name: emailservice
+  newName: mahinraza556/emailservice
+  newTag: latest
+- name: frontend
+  newName: mahinraza556/frontend
+  newTag: latest
+- name: loadgenerator
+  newName: mahinraza556/loadgenerator
+  newTag: latest
+- name: paymentservice
+  newName: mahinraza556/paymentservice
+  newTag: latest
+- name: productcatalogservice
+  newName: mahinraza556/productcatalogservice
+  newTag: latest
+- name: recommendationservice
+  newName: mahinraza556/recommendationservice
+  newTag: latest
+- name: shippingservice
+  newName: mahinraza556/shippingservice
+  newTag: latest
+
+patches:
+  - target:
+      kind: Deployment
+      name: cartservice
+    patch: |
+      - op: replace
+        path: /spec/template/spec/containers/0/env/0/value
+        value: "myapp-redis-cart-prod:6379"
+  - target:
+      kind: Deployment
+      name: checkoutservice
+    patch: |
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: PRODUCT_CATALOG_SERVICE_ADDR
+          value: "myapp-productcatalogservice-prod:3550"
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: SHIPPING_SERVICE_ADDR
+          value: "myapp-shippingservice-prod:50051"
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: PAYMENT_SERVICE_ADDR
+          value: "myapp-paymentservice-prod:50051"
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: EMAIL_SERVICE_ADDR
+          value: "myapp-emailservice-prod:5000"
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: CURRENCY_SERVICE_ADDR
+          value: "myapp-currencyservice-prod:7000"
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: CART_SERVICE_ADDR
+          value: "myapp-cartservice-prod:7070"
+
+  - target:
+      kind: Deployment
+      name: recommendationservice
+    patch: |
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: PRODUCT_CATALOG_SERVICE_ADDR
+          value: "myapp-productcatalogservice-prod:3550"
+
+  - target:
+      kind: Deployment
+      name: frontend
+    patch: |
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: PRODUCT_CATALOG_SERVICE_ADDR
+          value: "myapp-productcatalogservice-prod:3550"
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: RECOMMENDATION_SERVICE_ADDR
+          value: "myapp-recommendationservice-prod:8080"
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: CHECKOUT_SERVICE_ADDR
+          value: "myapp-checkoutservice-prod:5050"
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: AD_SERVICE_ADDR
+          value: "myapp-adservice-prod:9555"
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: SHOPPING_ASSISTANT_SERVICE_ADDR
+          value: "myapp-shoppingassistantservice-prod:80"
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: SHIPPING_SERVICE_ADDR
+          value: "myapp-shippingservice-prod:50051"
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: PAYMENT_SERVICE_ADDR
+          value: "myapp-paymentservice-prod:50051"
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: EMAIL_SERVICE_ADDR
+          value: "myapp-emailservice-prod:5000"
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: CURRENCY_SERVICE_ADDR
+          value: "myapp-currencyservice-prod:7000"
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: CART_SERVICE_ADDR
+          value: "myapp-cartservice-prod:7070"
+
+replicas:
+- count: 1
+  name: adservice
+- count: 1
+  name: cartservice
+- count: 1
+  name: checkoutservice
+- count: 1
+  name: currencyservice
+- count: 1
+  name: emailservice
+- count: 1
+  name: frontend
+- count: 1
+  name: loadgenerator
+- count: 1
+  name: paymentservice
+- count: 1
+  name: productcatalogservice
+- count: 1
+  name: recommendationservice
+- count: 1
+  name: shippingservice

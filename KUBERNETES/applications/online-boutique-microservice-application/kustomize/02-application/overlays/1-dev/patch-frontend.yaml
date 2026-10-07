@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  template:
+    spec:
+      containers:
+        - name: frontend
+          env:
+          - name: PRODUCT_CATALOG_SERVICE_ADDR
+            value: "myapp-productcatalogservice-dev:3550"
+          - name: RECOMMENDATION_SERVICE_ADDR
+            value: "myapp-recommendationservice-dev:8080"
+          - name: CHECKOUT_SERVICE_ADDR
+            value: "myapp-checkoutservice-dev:5050"
+          - name: AD_SERVICE_ADDR
+            value: "myapp-adservice-dev:9555"
+          - name: SHOPPING_ASSISTANT_SERVICE_ADDR
+            value: "myapp-shoppingassistantservice-dev:80"
+          - name: SHIPPING_SERVICE_ADDR
+            value: "myapp-shippingservice-dev:50051"
+          - name: PAYMENT_SERVICE_ADDR
+            value: "myapp-paymentservice-dev:50051"
+          - name: EMAIL_SERVICE_ADDR
+            value: "myapp-emailservice-dev:5000"
+          - name: CURRENCY_SERVICE_ADDR
+            value: "myapp-currencyservice-dev:7000"
+          - name: CART_SERVICE_ADDR
+            value: "myapp-cartservice-dev:7070"

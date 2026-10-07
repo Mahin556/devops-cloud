@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: example01
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: example01
+  namespace: example01
+  labels:
+    app: example01
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: example01
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: example01
+        version: v1
+    spec:
+      containers:
+        - name: file-info
+          image: busybox
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              while true; do
+                echo "[$(date +%s)] - INFO - FILE message host: $(hostname)" >> /var/log/example-info.log;
+                sleep 1;
+              done
+          volumeMounts:
+            - name: var-log
+              mountPath: /var/log
+      volumes:
+        - name: var-log
+          emptyDir: {}

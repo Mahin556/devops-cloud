@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "{{ include "01-application.configmapName" . }}"
+data:
+  REDIS_ADDR: "{{ include "01-application.fullname" . }}-rediscart:6379"
+  PRODUCT_CATALOG_SERVICE_ADDR: "{{ include "01-application.fullname" . }}-productcatalogservice:3550"
+  SHIPPING_SERVICE_ADDR: "{{ include "01-application.fullname" . }}-shippingservice:50051"
+  PAYMENT_SERVICE_ADDR: "{{ include "01-application.fullname" . }}-paymentservice:50051"
+  EMAIL_SERVICE_ADDR: "{{ include "01-application.fullname" . }}-emailservice:5000"
+  CURRENCY_SERVICE_ADDR: "{{ include "01-application.fullname" . }}-currencyservice:7000"
+  CART_SERVICE_ADDR: "{{ include "01-application.fullname" . }}-cartservice:7070"
+  RECOMMENDATION_SERVICE_ADDR: "{{ include "01-application.fullname" . }}-recommendationservice:8080"
+  CHECKOUT_SERVICE_ADDR: "{{ include "01-application.fullname" . }}-checkoutservice:5050"
+  AD_SERVICE_ADDR: "{{ include "01-application.fullname" . }}-adservice:9555"
+  SHOPPING_ASSISTANT_SERVICE_ADDR: "{{ include "01-application.fullname" . }}-shoppingassistantservice:5000"
+  FRONTEND_ADDR: "{{ include "01-application.fullname" . }}-frontendservice:80"

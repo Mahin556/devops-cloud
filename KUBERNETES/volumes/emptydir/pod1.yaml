@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-pod
+spec:
+  containers:
+  - name: my-container
+    image: nginx:latest
+    imagePullPolicy: IfNotPresent
+    volumeMounts:
+    - name: my-persistent-storage
+      mountPath: "/usr/share/nginx/html"
+  - name: my-container1
+    image: busybox:latest
+    volumeMounts:
+    - name: my-persistent-storage
+      mountPath: "/var/www/html" 
+    command: ["/bin/sh","-c","sleep 3600s"]
+  volumes:
+  - name: my-persistent-storage
+    emptyDir: {}

@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: my-ingress
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - my-services.mahinraza.online
+    secretName: my-services-mahinraza-online-tls-secret
+  rules:
+  - host: my-services.mahinraza.online
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend
+            port:
+              number: 80

@@ -1,0 +1,16 @@
+{{- if .Values.cartservice.enabled -}}
+{{- if .Values.cartservice.serviceAccount.create -}}
+{{- $name := "cartservice" -}}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "01-application.fullname" . }}-{{ $name }}
+  labels:
+    {{- include "01-application.metadataLabels" . | nindent 4 }}
+  {{- with .Values.cartservice.serviceAccount.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+automountServiceAccountToken: {{ .Values.cartservice.serviceAccount.automount }}
+{{- end -}}
+{{- end -}}

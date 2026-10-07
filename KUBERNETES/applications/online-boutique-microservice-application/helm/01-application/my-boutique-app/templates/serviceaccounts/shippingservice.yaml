@@ -1,0 +1,16 @@
+{{- if .Values.shippingservice.enabled -}}
+{{- if .Values.shippingservice.serviceAccount.create -}}
+{{- $name := "shippingservice" -}}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "01-application.fullname" . }}-{{ $name }}
+  labels:
+    {{- include "01-application.metadataLabels" . | nindent 4 }}
+  {{- with .Values.shippingservice.serviceAccount.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+automountServiceAccountToken: {{ .Values.shippingservice.serviceAccount.automount }}
+{{- end -}}
+{{- end -}}

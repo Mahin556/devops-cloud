@@ -1,0 +1,8 @@
+startupProbe:
+        exec:
+          command:
+            - sh
+            - -c
+            - '[[ "$(curl -s localhost:4567/healthz)" =~ "OK" ]]'
+        failureThreshold: 999
+        periodSeconds: 2

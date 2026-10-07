@@ -1,0 +1,18 @@
+{{- if .Values.rediscart.enabled -}}
+{{- $name := "rediscart" -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "01-application.fullname" . }}-{{ $name }}
+  labels:
+    {{- include "01-application.metadataLabels" . | nindent 4 }}
+    {{- include "01-application.selectorLabels" (list . $name) | nindent 4 }}
+spec:
+  type: ClusterIP
+  selector:
+      {{- include "01-application.selectorLabels" (list . $name) | nindent 6 }}
+  ports:
+  - name: tcp-redis
+    port: 6379
+    targetPort: 6379
+{{- end -}}

@@ -1,0 +1,51 @@
+{{- if .Values.frontendservice.enabled -}}
+{{- if .Values.frontendservice.autoscaling.enabled -}}
+{{- $name := "frontendservice" -}}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "01-application.fullname" . }}-{{ $name }}-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "01-application.fullname" . }}-{{ $name }}
+
+  minReplicas: {{ .Values.frontendservice.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.frontendservice.autoscaling.maxReplicas }}
+
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 30 #default is 0 seconds
+      policies:
+        - type: Pods
+          value: 1
+          periodSeconds: 10
+
+    scaleDown:
+      stabilizationWindowSeconds: 30 #default is 300 seconds
+      policies:
+        - type: Pods
+          value: 1
+          periodSeconds: 20
+
+  metrics:
+    {{- if .Values.frontendservice.autoscaling.targetCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.frontendservice.autoscaling.targetCPUUtilizationPercentage }}
+    {{ end }}
+
+    {{ if .Values.frontendservice.autoscaling.targetMemoryUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.frontendservice.autoscaling.targetMemoryUtilizationPercentage }}
+    {{ end }}
+{{- end -}}
+{{- end -}}

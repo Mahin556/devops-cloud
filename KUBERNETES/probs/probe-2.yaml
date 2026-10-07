@@ -1,0 +1,199 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"Pod","metadata":{"annotations":{},"name":"sleepy","namespace":"challenge"},"spec":{"containers":[{"image":"ghcr.io/iximiuz/labs/kubernetes-native-sidecars/app:v1.0.0","name":"app"}],"initContainers":[{"image":"ghcr.io/iximiuz/labs/kubernetes-native-sidecars/sleepy-sidecar:v1.0.0","name":"sleepy-sidecar","restartPolicy":"Always"}],"restartPolicy":"Never"}}
+  creationTimestamp: "2026-09-11T12:58:06Z"
+  generation: 1
+  name: sleepy
+  namespace: challenge
+  resourceVersion: "442"
+  uid: 260ecdbd-df2c-4fb4-893a-1f88e945a887
+spec:
+  containers:
+  - image: ghcr.io/iximiuz/labs/kubernetes-native-sidecars/app:v1.0.0
+    imagePullPolicy: IfNotPresent
+    name: app
+    resources: {}
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: kube-api-access-h2rlj
+      readOnly: true
+  dnsPolicy: ClusterFirst
+  enableServiceLinks: true
+  initContainers:
+  - image: ghcr.io/iximiuz/labs/kubernetes-native-sidecars/sleepy-sidecar:v1.0.0
+    imagePullPolicy: IfNotPresent
+    name: sleepy-sidecar
+    resources: {}
+    restartPolicy: Always
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    startupProbe:
+        exec:
+          command:
+            - sh
+            - -c
+            - '[[ "$(curl -s localhost:4567/healthz)" =~ "OK" ]]'
+        failureThreshold: 999
+        periodSeconds: 2
+    volumeMounts:
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: kube-api-access-h2rlj
+      readOnly: true
+  nodeName: kube-01
+  preemptionPolicy: PreemptLowerPriority
+  priority: 0
+  restartPolicy: Never
+  schedulerName: default-scheduler
+  securityContext: {}
+  serviceAccount: default
+  serviceAccountName: default
+  terminationGracePeriodSeconds: 30
+  tolerations:
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 300
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 300
+  volumes:
+  - name: kube-api-access-h2rlj
+    projected:
+      defaultMode: 420
+      sources:
+      - serviceAccountToken:
+          expirationSeconds: 3607
+          path: token
+      - configMap:
+          items:
+          - key: ca.crt
+            path: ca.crt
+          name: kube-root-ca.crt
+      - downwardAPI:
+          items:
+          - fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+            path: namespace
+status:
+  conditions:
+  - lastProbeTime: null
+    lastTransitionTime: "2026-09-11T12:58:52Z"
+    observedGeneration: 1
+    status: "False"
+    type: PodReadyToStartContainers
+  - lastProbeTime: null
+    lastTransitionTime: "2026-09-11T12:58:21Z"
+    observedGeneration: 1
+    status: "True"
+    type: Initialized
+  - lastProbeTime: null
+    lastTransitionTime: "2026-09-11T12:58:22Z"
+    observedGeneration: 1
+    reason: PodFailed
+    status: "False"
+    type: Ready
+  - lastProbeTime: null
+    lastTransitionTime: "2026-09-11T12:58:22Z"
+    observedGeneration: 1
+    reason: PodFailed
+    status: "False"
+    type: ContainersReady
+  - lastProbeTime: null
+    lastTransitionTime: "2026-09-11T12:58:06Z"
+    observedGeneration: 1
+    status: "True"
+    type: PodScheduled
+  containerStatuses:
+  - containerID: containerd://a53ea6a4d90d38eec7ddf04072af68e30cae9cdbb2fa768dc85d144f1ec37202
+    image: ghcr.io/iximiuz/labs/kubernetes-native-sidecars/app:v1.0.0
+    imageID: sha256:70596fdd5a8a5269606cd633c8b8869bb16418044e35392c0d0deb1c2d62bc90
+    lastState: {}
+    name: app
+    ready: false
+    resources: {}
+    restartCount: 0
+    started: false
+    state:
+      terminated:
+        containerID: containerd://a53ea6a4d90d38eec7ddf04072af68e30cae9cdbb2fa768dc85d144f1ec37202
+        exitCode: 1
+        finishedAt: "2026-09-11T12:58:22Z"
+        reason: Error
+        startedAt: "2026-09-11T12:58:21Z"
+    user:
+      linux:
+        gid: 0
+        supplementalGroups:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+        - 6
+        - 10
+        - 11
+        - 20
+        - 26
+        - 27
+        uid: 0
+    volumeMounts:
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: kube-api-access-h2rlj
+      readOnly: true
+      recursiveReadOnly: Disabled
+  hostIP: 172.16.0.2
+  hostIPs:
+  - ip: 172.16.0.2
+  initContainerStatuses:
+  - containerID: containerd://b0bf158b000dc096be94481d3eeaa6065078ff35ac14aa3c949738defe5c7481
+    image: ghcr.io/iximiuz/labs/kubernetes-native-sidecars/sleepy-sidecar:v1.0.0
+    imageID: sha256:2e53a44b356ef3cd7735a30596b49d7b3e3a4db5552b116486d51bd5e5797dc4
+    lastState: {}
+    name: sleepy-sidecar
+    ready: false
+    resources: {}
+    restartCount: 0
+    started: false
+    state:
+      terminated:
+        containerID: containerd://b0bf158b000dc096be94481d3eeaa6065078ff35ac14aa3c949738defe5c7481
+        exitCode: 137
+        finishedAt: "2026-09-11T12:58:52Z"
+        reason: Error
+        startedAt: "2026-09-11T12:58:21Z"
+    user:
+      linux:
+        gid: 0
+        supplementalGroups:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+        - 6
+        - 10
+        - 11
+        - 20
+        - 26
+        - 27
+        uid: 0
+    volumeMounts:
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: kube-api-access-h2rlj
+      readOnly: true
+      recursiveReadOnly: Disabled
+  observedGeneration: 1
+  phase: Failed
+  podIP: 10.42.0.4
+  podIPs:
+  - ip: 10.42.0.4
+  qosClass: BestEffort
+  resources: {}
+  startTime: "2026-09-11T12:58:06Z"

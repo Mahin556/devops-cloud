@@ -1,0 +1,16 @@
+{{- if .Values.checkoutservice.enabled -}}
+{{- if .Values.checkoutservice.serviceAccount.create -}}
+{{- $name := "checkoutservice" -}}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "01-application.fullname" . }}-{{ $name }}
+  labels:
+    {{- include "01-application.metadataLabels" . | nindent 4 }}
+  {{- with .Values.checkoutservice.serviceAccount.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+automountServiceAccountToken: {{ .Values.checkoutservice.serviceAccount.automount }}
+{{- end -}}
+{{- end -}}

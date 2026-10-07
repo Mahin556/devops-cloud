@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: sidecar-pod
+spec:
+  # Native sidecars are defined under initContainers with restartPolicy: Always
+  initContainers:
+    - name: logger
+      image: busybox:latest
+      command: ["sh", "-c", "while true; do date >> /data/log.txt; sleep 2; done"]
+      restartPolicy: Always
+      volumeMounts:
+        - name: shared-vol
+          mountPath: /data
+
+  containers:
+    - name: app
+      image: busybox
+      command: ["sh", "-c", "tail -f /data/log.txt"]
+      ports:
+        - containerPort: 80
+      volumeMounts:
+        - name: shared-vol
+          mountPath: /data
+
+  volumes:
+    - name: shared-vol
+      emptyDir: {}

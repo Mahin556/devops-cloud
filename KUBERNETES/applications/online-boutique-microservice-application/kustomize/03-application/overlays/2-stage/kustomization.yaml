@@ -1,0 +1,137 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Reference to shared base
+resources:
+  - ../../base
+
+# Optional: Apply name prefix/suffix
+nameSuffix: -stage
+namePrefix: myapp-
+
+namespace: stage
+
+labels:
+  - pairs:
+      env: stage
+    includeSelectors: true
+
+images:
+- name: adservice
+  newName: mahinraza556/adservice
+  newTag: latest
+- name: cartservice
+  newName: mahinraza556/cartservice
+  newTag: latest
+- name: checkoutservice
+  newName: mahinraza556/checkoutservice
+  newTag: latest
+- name: currencyservice
+  newName: mahinraza556/currencyservice
+  newTag: latest
+- name: emailservice
+  newName: mahinraza556/emailservice
+  newTag: latest
+- name: frontend
+  newName: mahinraza556/frontend
+  newTag: latest
+- name: loadgenerator
+  newName: mahinraza556/loadgenerator
+  newTag: latest
+- name: paymentservice
+  newName: mahinraza556/paymentservice
+  newTag: latest
+- name: productcatalogservice
+  newName: mahinraza556/productcatalogservice
+  newTag: latest
+- name: recommendationservice
+  newName: mahinraza556/recommendationservice
+  newTag: latest
+- name: shippingservice
+  newName: mahinraza556/shippingservice
+  newTag: latest
+
+patches:
+  # Inline patch for cartservice deployment
+  - patch: |
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: cartservice
+      spec:
+        template:
+          spec:
+            containers:
+            - name: cartservice
+              env:
+              - name: REDIS_ADDR
+                value: "myapp-redis-cart-stage:6379"
+  # Patch files for other services
+  - path: patch-checkoutservice.yaml
+  - path: patch-recommendationservice.yaml
+  - path: patch-frontend.yaml
+
+configMapGenerator:
+  # From file
+  - name: file-config
+    files:
+      - config/app.config
+    options:
+      disableNameSuffixHash: true
+  # From file with custom key
+  - name: custom-key-config
+    files:
+      - app.properties=config/app.config
+  # From literals
+  - name: literal-config
+    literals:
+      - APP_ENV=stage
+      - LOG_LEVEL=debug
+  # From .env file
+  - name: env-config
+    envs:
+      - config/app.config
+
+secretGenerator:
+  # From literals
+  - name: literal-secret
+    literals:
+      - username=admin
+      - password=secretpassword
+  # From file
+  - name: file-secret
+    files:
+      - secret/app.secret
+  # Custom key for file
+  - name: custom-key-secret
+    files:
+      - db_pass=secret/app.secret
+  # From .env file
+  - name: env-secret
+    envs:
+      - secret/app.secret
+
+
+replicas:
+- count: 1
+  name: adservice
+- count: 1
+  name: cartservice
+- count: 1
+  name: checkoutservice
+- count: 1
+  name: currencyservice
+- count: 1
+  name: emailservice
+- count: 1
+  name: frontend
+- count: 1
+  name: loadgenerator
+- count: 1
+  name: paymentservice
+- count: 1
+  name: productcatalogservice
+- count: 1
+  name: recommendationservice
+- count: 1
+  name: shippingservice

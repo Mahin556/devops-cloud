@@ -1,0 +1,16 @@
+{{- if .Values.recommendationservice.enabled -}}
+{{- if .Values.recommendationservice.serviceAccount.create -}}
+{{- $name := "recommendationservice" -}}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "01-application.fullname" . }}-{{ $name }}
+  labels:
+    {{- include "01-application.metadataLabels" . | nindent 4 }}
+  {{- with .Values.recommendationservice.serviceAccount.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+automountServiceAccountToken: {{ .Values.recommendationservice.serviceAccount.automount }}
+{{- end -}}
+{{- end -}}

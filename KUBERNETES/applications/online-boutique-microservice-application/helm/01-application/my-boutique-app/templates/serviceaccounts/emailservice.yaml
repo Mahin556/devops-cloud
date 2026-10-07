@@ -1,0 +1,16 @@
+{{- if .Values.emailservice.enabled -}}
+{{- if .Values.emailservice.serviceAccount.create -}}
+{{- $name := "emailservice" -}}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "01-application.fullname" . }}-{{ $name }}
+  labels:
+    {{- include "01-application.metadataLabels" . | nindent 4 }}
+  {{- with .Values.emailservice.serviceAccount.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+automountServiceAccountToken: {{ .Values.emailservice.serviceAccount.automount }}
+{{- end -}}
+{{- end -}}

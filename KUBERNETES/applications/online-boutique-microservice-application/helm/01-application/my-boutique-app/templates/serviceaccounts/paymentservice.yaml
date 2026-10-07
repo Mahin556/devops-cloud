@@ -1,0 +1,16 @@
+{{- if .Values.paymentservice.enabled -}}
+{{- if .Values.paymentservice.serviceAccount.create -}}
+{{- $name := "paymentservice" -}}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "01-application.fullname" . }}-{{ $name }}
+  labels:
+    {{- include "01-application.metadataLabels" . | nindent 4 }}
+  {{- with .Values.paymentservice.serviceAccount.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+automountServiceAccountToken: {{ .Values.paymentservice.serviceAccount.automount }}
+{{- end -}}
+{{- end -}}

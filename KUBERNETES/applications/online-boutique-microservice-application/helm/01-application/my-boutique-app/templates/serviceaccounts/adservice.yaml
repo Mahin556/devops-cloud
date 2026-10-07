@@ -1,0 +1,16 @@
+{{- if .Values.adservice.enabled -}}
+{{- if .Values.adservice.serviceAccount.create -}}
+{{- $name := "adservice" -}}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "01-application.fullname" . }}-{{ $name }}
+  labels:
+    {{- include "01-application.metadataLabels" . | nindent 4 }}
+  {{- with .Values.adservice.serviceAccount.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+automountServiceAccountToken: {{ .Values.adservice.serviceAccount.automount }}
+{{- end -}}
+{{- end -}}

@@ -1,0 +1,44 @@
+Vagrant.configure("2") do |config|
+
+  config.vm.box = "ubuntu/jammy64"
+
+  # =========================
+  # SERVER 1
+  # =========================
+  config.vm.define "server1" do |server1|
+
+    server1.vm.hostname = "master"
+
+    # Host-only network
+    server1.vm.network "private_network",
+      ip: "192.168.56.11"
+
+    server1.vm.provider "virtualbox" do |vb|
+      vb.name = "ubuntu-server1"
+      vb.memory = 2048
+      vb.cpus = 2
+    end
+
+  end
+
+
+  # =========================
+  # SERVER 2
+  # =========================
+  config.vm.define "server2" do |server2|
+
+    server2.vm.hostname = "worker"
+
+    # Same host-only network
+    server2.vm.network "private_network",
+      ip: "192.168.56.12"
+
+    server2.vm.provider "virtualbox" do |vb|
+      vb.name = "ubuntu-server2"
+      vb.memory = 2048
+      vb.cpus = 2
+    end
+
+  end
+
+end

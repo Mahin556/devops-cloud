@@ -1,0 +1,16 @@
+{{- if .Values.loadgenerator.enabled -}}
+{{- if .Values.loadgenerator.serviceAccount.create -}}
+{{- $name := "loadgenerator" -}}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "01-application.fullname" . }}-{{ $name }}
+  labels:
+    {{- include "01-application.metadataLabels" . | nindent 4 }}
+  {{- with .Values.loadgenerator.serviceAccount.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+automountServiceAccountToken: {{ .Values.loadgenerator.serviceAccount.automount }}
+{{- end -}}
+{{- end -}}

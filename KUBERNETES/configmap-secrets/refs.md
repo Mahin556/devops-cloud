@@ -1,0 +1,24 @@
+- [![Watch the video](https://img.youtube.com/vi/9vch82LomtE/maxresdefault.jpg)](https://www.youtube.com/watch?v=9vch82LomtE&ab_channel=CloudWithVarJosh)
+- https://spacelift.io/blog/kubernetes-configmap
+- https://www.tutorialspoint.com/kubernetes/kubernetes_monitoring.htm
+- https://www.geeksforgeeks.org/devops/kubernetes-configmap/
+- https://www.geeksforgeeks.org/cloud-computing/kubernetes-create-config-map-from-files/
+- https://www.geeksforgeeks.org/devops/kubernetes-create-configmap-from-yaml-file/
+- https://www.geeksforgeeks.org/devops/kubernetes-config-map-from-directory/
+- https://www.geeksforgeeks.org/devops/kubernetes-injecting-configmap-as-files/
+- https://www.groundcover.com/blog/kubernetes-configmap
+- https://yuminlee2.medium.com/kubernetes-configmaps-fee26f4c3ccf
+- https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/
+- https://kubernetes.io/docs/concepts/configuration/configmap/
+- https://stackoverflow.com/questions/71058097/how-do-i-attach-a-configmap-to-a-deployment-in-kubernetes
+- https://www.tutorialspoint.com/kubernetes/kubernetes_monitoring.htm
+- https://muditmathur121.medium.com/mastering-configmaps-and-secrets-in-kubernetes-16df7ad514f6
+- https://medium.com/@ravipatel.it/introduction-kubernetes-configmaps-and-secrets-with-example-a2987076065e
+- https://www.geeksforgeeks.org/devops/kubernetes-working-with-secrets/
+- https://www.geeksforgeeks.org/devops/kubernetes-secrets/
+- https://kubernetes.io/docs/tasks/inject-data-application/distribute-credentials-secure/#define-container-environment-variables-using-secret-data
+- https://www.warp.dev/terminus/kubectl-get-secrets
+- https://blog.gitguardian.com/how-to-handle-secrets-in-kubernetes/
+- https://phoenixnap.com/kb/kubernetes-secrets
+- https://kubernetes.io/docs/reference/kubectl/generated/kubectl_create/kubectl_create_secret_docker-registry/
+- https://kubernetes.io/docs/concepts/configuration/secret/

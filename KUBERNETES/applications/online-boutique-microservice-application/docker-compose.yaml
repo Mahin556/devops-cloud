@@ -1,0 +1,174 @@
+name: online-boutique
+version: '3.8'
+
+services:
+  adservice:
+    build: 
+      context: ./src/adservice
+      dockerfile: Dockerfile
+    image: adservice:latest
+    container_name: adservice
+    environment:
+      - CONTAINER_PORT=9555
+      - PORT=9555
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost:9555/"]
+    #   interval: 5s
+    #   timeout: 3s
+    #   retries: 5
+    #   start_period: 10s
+
+  cartservice:
+    build: 
+      context: ./src/cartservice/src
+      dockerfile: Dockerfile
+    image: cartservice:latest
+    container_name: cartservice
+    environment:
+      - CONTAINER_PORT=7070
+      - REDIS_ADDR=redis-cart:6379
+
+  redis-cart:
+    image: redis:alpine
+    container_name: redis-cart
+    environment:
+      - CONTAINER_PORT=6379
+    tmpfs:  
+      - /data:size=512m
+    
+  checkoutservice:
+    build: 
+      context: ./src/checkoutservice
+      dockerfile: Dockerfile
+    image: checkoutservice:latest
+    container_name: checkoutservice
+    environment:
+      - PORT=5050
+      - PRODUCT_CATALOG_SERVICE_ADDR=productcatalogservice:3550
+      - CART_SERVICE_ADDR=cartservice:7070
+      - SHIPPING_SERVICE_ADDR=shippingservice:50051
+      - PAYMENT_SERVICE_ADDR=paymentservice:50051
+      - EMAIL_SERVICE_ADDR=emailservice:8080
+      - CURRENCY_SERVICE_ADDR=currencyservice:7000
+
+  currencyservice:
+    build: 
+      context: ./src/currencyservice
+      dockerfile: Dockerfile
+    image: currencyservice:latest
+    container_name: currencyservice
+    environment:
+      - CONTAINER_PORT=7000
+      - PORT=7000
+      - DISABLE_PROFILER=1
+
+  emailservice:
+    build: 
+      context: ./src/emailservice
+      dockerfile: Dockerfile
+    image: emailservice:latest
+    container_name: emailservice
+    environment:
+      - CONTAINER_PORT=8080
+      - PORT=8080
+      - DISABLE_PROFILER=1
+
+  frontend:
+    build: 
+      context: ./src/frontend
+      dockerfile: Dockerfile
+    image: frontend:latest
+    container_name: frontend
+    ports:
+      - "80:8080"
+    environment:
+      - CONTAINER_PORT=8080
+      - PORT=8080
+      - PRODUCT_CATALOG_SERVICE_ADDR=productcatalogservice:3550
+      - CART_SERVICE_ADDR=cartservice:7070
+      - CHECKOUT_SERVICE_ADDR=checkoutservice:5050
+      - CURRENCY_SERVICE_ADDR=currencyservice:7000
+      - RECOMMENDATION_SERVICE_ADDR=recommendationservice:8080
+      - SHIPPING_SERVICE_ADDR=shippingservice:50051
+      - AD_SERVICE_ADDR=adservice:9555
+      - SHOPPING_ASSISTANT_SERVICE_ADDR=shoppingassistantservice:8080
+      - ENABLE_PROFILER=0
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost:8080/"]
+    #   interval: 5s
+    #   timeout: 3s
+    #   retries: 5
+    #   start_period: 10s
+
+  paymentservice:
+    build: 
+      context: ./src/paymentservice
+      dockerfile: Dockerfile
+    image: paymentservice:latest
+    container_name: paymentservice
+    environment:
+      - CONTAINER_PORT=50051
+      - PORT=50051
+      - DISABLE_PROFILER=1
+
+  productcatalogservice:
+    build: 
+      context: ./src/productcatalogservice
+      dockerfile: Dockerfile
+    image: productcatalogservice:latest
+    container_name: productcatalogservice
+    environment:
+      - CONTAINER_PORT=3550
+      - PORT=3550
+      - DISABLE_PROFILER=1
+
+  recommendationservice:
+    build: 
+      context: ./src/recommendationservice
+      dockerfile: Dockerfile
+    image: recommendationservice:latest
+    container_name: recommendationservice
+    environment:
+      - CONTAINER_PORT=8080
+      - PORT=8080
+      - DISABLE_PROFILER=1
+      - PRODUCT_CATALOG_SERVICE_ADDR=productcatalogservice:3550
+
+  shippingservice:
+    build:  
+      context: ./src/shippingservice
+      dockerfile: Dockerfile
+    image: shippingservice:latest
+    container_name: shippingservice
+    environment:
+      - CONTAINER_PORT=50051
+      - PORT=50051
+      - DISABLE_PROFILER=1
+
+  loadgenerator:
+    build: 
+      context: ./src/loadgenerator
+      dockerfile: Dockerfile
+    image: loadgenerator:latest
+    container_name: loadgenerator
+    environment:
+      - CONTAINER_PORT=8080
+      - PORT=8080
+      - FRONTEND_ADDR=frontend:8080
+      - USERS=10
+    depends_on:
+      frontend:
+        condition: service_started
+
+  # shoppingassistantservice:
+  #   build: 
+  #     context: ./src/shoppingassistantservice
+  #     dockerfile: Dockerfile
+  #   image: shoppingassistantservice:latest
+  #   container_name: shoppingassistantservice
+  #   environment:
+  #     - CONTAINER_PORT=8080
+  #     - PORT=8080
+  #     - PROJECT_ID=online-boutique
+  #     - PRODUCT_CATALOG_SERVICE_ADDR=productcatalogservice:3550
+  #     - RECOMMENDATION_SERVICE_ADDR=recommendationservice:8080

@@ -1,0 +1,34 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: demo-pod
+  namespace: default
+  labels:
+    ENV: prod
+spec:
+  containers:
+    - name: command
+      image: registry.k8s.io/busybox
+      args:
+        - /bin/sh
+        - -c
+        - touch /tmp/healthz; sleep 30; rm -f /tmp/healthz; sleep 60;
+      livenessProbe:
+        exec:
+          command:
+            - cat
+            - /tmp/healthz
+        initialDelaySeconds: 5
+        periodSeconds: 5
+      readinessProbe:
+        exec:
+          command:
+            - cat
+            - /tmp/healthz
+        initialDelaySeconds: 5
+        periodSeconds: 5
+        failureThreshold: 3
+        successThreshold: 1
+
+
+

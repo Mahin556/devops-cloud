@@ -1,0 +1,51 @@
+{{- if .Values.checkoutservice.enabled -}}
+{{- if .Values.checkoutservice.autoscaling.enabled -}}
+{{- $name := "checkoutservice" -}}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "01-application.fullname" . }}-{{ $name }}-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "01-application.fullname" . }}-{{ $name }}
+
+  minReplicas: {{ .Values.checkoutservice.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.checkoutservice.autoscaling.maxReplicas }}
+
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 30 #default is 0 seconds
+      policies:
+        - type: Pods
+          value: 1
+          periodSeconds: 10
+
+    scaleDown:
+      stabilizationWindowSeconds: 30 #default is 300 seconds
+      policies:
+        - type: Pods
+          value: 1
+          periodSeconds: 20
+
+  metrics:
+    {{- if .Values.checkoutservice.autoscaling.targetCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.checkoutservice.autoscaling.targetCPUUtilizationPercentage }}
+    {{ end }}
+
+    {{ if .Values.checkoutservice.autoscaling.targetMemoryUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.checkoutservice.autoscaling.targetMemoryUtilizationPercentage }}
+    {{ end }}
+{{- end -}}
+{{- end -}}

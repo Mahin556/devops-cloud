@@ -1,0 +1,7 @@
+* **Kubernetes Documentation:** [https://kubernetes.io/docs/](https://kubernetes.io/docs/)
+* [Kubernetes API Concepts](https://kubernetes.io/docs/concepts/overview/kubernetes-api/)
+* [Authorization Overview](https://kubernetes.io/docs/reference/access-authn-authz/authorization/)
+* [Using RBAC Authorization](https://kubernetes.io/docs/reference/access-authn-authz/rbac/)
+* [Node Authorization](https://kubernetes.io/docs/reference/access-authn-authz/node/)
+* [Webhook Mode](https://kubernetes.io/docs/reference/access-authn-authz/webhook/)
+* [ABAC Mode](https://kubernetes.io/docs/reference/access-authn-authz/abac/)

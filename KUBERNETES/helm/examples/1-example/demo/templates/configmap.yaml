@@ -1,0 +1,8 @@
+# File: mychart/templates/config.yaml
+
+# Application Configuration
+database:
+  host: {{ .Values.config.database.host | default "localhost" }}
+  port: {{ .Values.config.database.port | default 5432 }}
+  username: {{ .Values.config.database.username | default "myuser" }}
+  password: {{ .Values.config.database.password | default "mypasssword" }}

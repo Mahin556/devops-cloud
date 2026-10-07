@@ -1,0 +1,16 @@
+{{- if .Values.currencyservice.enabled -}}
+{{- if .Values.currencyservice.serviceAccount.create -}}
+{{- $name := "currencyservice" -}}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "01-application.fullname" . }}-{{ $name }}
+  labels:
+    {{- include "01-application.metadataLabels" . | nindent 4 }}
+  {{- with .Values.currencyservice.serviceAccount.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+automountServiceAccountToken: {{ .Values.currencyservice.serviceAccount.automount }}
+{{- end -}}
+{{- end -}}

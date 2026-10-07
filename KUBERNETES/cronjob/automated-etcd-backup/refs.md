@@ -1,0 +1,8 @@
+- https://kubernetes.io/docs/tasks/configure-pod-container/static-pod/
+- https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/
+- https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/
+- https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
+- https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
+- https://kubernetes.io/docs/concepts/workloads/pods/downward-api/
+- https://kubernetes.io/docs/concepts/workloads/controllers/job/
+- https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/
